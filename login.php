@@ -5,15 +5,18 @@
         $phone = $_POST['phone'];
         if(isset($phone) && isset($_SESSION['Password'])){
             $password=$_POST['password'];
-            if($password = $_SESSION['Password']){
+            if($password == $_SESSION['Password']){
+                $_SESSION['Username']=$_SESSION['tempUname'];
                 header('Location: ./index.php');
+            }else{
+                echo "<script>alert('Incorrect Password');</script>";
             }
         }else{
             $sql="SELECT * FROM users WHERE Contact = $phone";
             $result = $conn->query($sql);
             if($result->num_rows==1){
                 $row=$result->fetch_assoc();
-                $_SESSION['Username']=$row['Name'];
+                $_SESSION['tempUname']=$row['Name'];
                 $_SESSION['Phone']=$row['Contact'];
                 $_SESSION['Password']=$row['Password'];
             }else{
@@ -40,7 +43,7 @@
         <label for="phone">Phone:</label>
         <input type="number" name="phone" id="phone" value="<?php echo @$_SESSION['Phone'];?>" maxlength="10" minlength="10"><br><br>
         <?php 
-            if(isset($_SESSION['Username'])){
+            if(isset($_SESSION['Password'])){
                 echo '<label for="password">Password:</label>
                 <input type="password" name="password" id="password" maxlength="255" minlength="8"><br><br>';
             }
