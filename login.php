@@ -9,6 +9,7 @@
                 $_SESSION['Username']=$_SESSION['tempUname'];
                 header('Location: ./index.php');
             }else{
+                unset($_SESSION['Password']);
                 echo "<script>alert('Incorrect Password');</script>";
             }
         }else{
@@ -19,6 +20,7 @@
                 $_SESSION['tempUname']=$row['Name'];
                 $_SESSION['Phone']=$row['Contact'];
                 $_SESSION['Password']=$row['Password'];
+                $_SESSION['userID']=$row['UserID'];
             }else{
                 echo "<script>
                 if(confirm('Email not registered! Wanna Register?')==true){
