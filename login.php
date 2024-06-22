@@ -5,7 +5,7 @@
         $phone = $_POST['phone'];
         if(isset($phone) && isset($_SESSION['Password'])){
             $password=$_POST['password'];
-            if($password == $_SESSION['Password']){
+            if (password_verify($password, $_SESSION['Password'])){
                 $_SESSION['Username']=$_SESSION['tempUname'];
                 header('Location: ./index.php');
             }else{

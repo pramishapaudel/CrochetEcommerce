@@ -1,4 +1,32 @@
-<?php require('./header.php');?>
+<?php 
+    require('./connection.php');
+    require('./header.php');
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        $uname = $_POST['name'];
+        $dob = $_POST['dob'];
+        $gender = $_POST['Gender'];
+        $contact = $_POST['contact'];
+        $citizenshipno = $_POST['citizen'];
+        $licenseno = $_POST['license'];
+        $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+
+        // Use prepared statement to prevent SQL injection
+        $sql = "INSERT INTO users(Name, DOB, Gender, Contact, Citizenship_no, License_no, Password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        // Create a prepared statement
+        $stmt = $conn->prepare($sql);
+                    
+       // Bind parameters
+        $stmt->bind_param("sssssss", $uname,$dob,$gender,$contact,$citizenshipno,$licenseno,$password); 
+
+        // Execute the statement
+        $stmt->execute();
+
+        $stmt->close();
+        // echo "<script>alert('Account successfully registered');</script>";
+        header ('Location: login.php');
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
