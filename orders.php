@@ -33,14 +33,14 @@
                 echo "<tr>";
                 echo "<td style='border: none; padding: 8px;'><img src='" . htmlspecialchars($order['vehicleImg']) . "' alt='" . htmlspecialchars($order['vehicleName']) . "' style='height: 100px; width: 100px;'></td>";
                 echo "<td style='border: none; padding: 8px; colspan: 3'>" . htmlspecialchars($order['vehicleDes']) . "</td>";
-                echo "<td style='border: none; padding: 8px;'><button onclick='deleteOrder(" . htmlspecialchars($order['orderID']) . ")'>Delete</button></td>";
+                echo "<td style='border: none; padding: 8px;'><button onclick='deleteOrder(" . htmlspecialchars($order['orderID']) . ")'>Cancel Order</button></td>";
                 echo "</tr>";
             }
 
             echo "</tbody>";
             echo "</table>";
         } else {
-            echo "No orders found for this user.";
+            echo "<center><h1>Looks like you haven't rented anything yet.....</h1></center>";
         }
 
         // Close the statement and connection
@@ -53,18 +53,20 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     function deleteOrder(orderID) {
-        $.ajax({
-            type: "POST",
-            url: "delete_order.php",
-            data: { orderID: orderID },
-            success: function(response) {
-                if(response === "success") {
-                    alert("Order deleted successfully");
-                    location.reload();
-                } else {
-                    alert("Failed to delete order");
+        if(confirm('Are you sure you want to cancel this order: ')) {
+            $.ajax({
+                type: "POST",
+                url: "delete_order.php",
+                data: { orderID: orderID },
+                success: function(response) {
+                    if(response === "success") {
+                        alert("Order deleted successfully");
+                        location.reload();
+                    } else {
+                        alert("Failed to delete order");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 </script>
