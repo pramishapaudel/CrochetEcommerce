@@ -8,7 +8,7 @@
         <ul type="none">
             <li><a href="./index.php">Home</a></li>
             <li><a href="./browse.php">Browse</a></li>
-            <li><a href="#">Orders</a></li>
+            <li><a href="./orders.php">Orders</a></li>
             <li><a href="#">About Us</a></li>
             <li style="float: right;">
             <?php
