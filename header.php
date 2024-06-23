@@ -14,7 +14,7 @@
             <?php
                 session_start();
                 if(isset($_SESSION['Username'])){
-                    echo '<a href="">'.$_SESSION['Username'].'</a>';
+                    echo '<a href="#">'.$_SESSION['Username'].'</a>';
                 }else{
                     echo '<a href="./login.php">Login/Register</a>';
                 }
