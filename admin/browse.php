@@ -1,5 +1,5 @@
 <?php
-    require('../connection.php');
+    require('../includes/connection.php');
     require('./includes/header.php');
     $select = 'SELECT * FROM products';
 

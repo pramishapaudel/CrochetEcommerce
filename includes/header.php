@@ -16,7 +16,7 @@
                 if (isset($_SESSION['Username'])) {
                     echo '<button class="dropbtn">'.$_SESSION['Username'].'</button>';
                     echo '<div class="dropdown-content">';
-                    echo '<a href="./profile.php">Profile</a>';
+                    echo '<a href="./includes/profile.php">Profile</a>';
                     echo '<a href="./includes/logout.php">Log Out</a>';
                     echo '</div>';
                 } else {

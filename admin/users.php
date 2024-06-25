@@ -1,5 +1,5 @@
 <?php
-    require('../connection.php');
+    require('../includes/connection.php');
     require('./includes/header.php');
 
     // Fetch all users from the database

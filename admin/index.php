@@ -1,10 +1,10 @@
 <?php
-    require('../connection.php');
+    require('../includes/connection.php');
     require('./includes/header.php');
 
     // Ensure the admin is logged in
     if (!isset($_SESSION['adminID'])) {
-        header("Location: admin_login.php");
+        header("Location: ../login.php");
         exit();
     }
 
