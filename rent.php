@@ -52,7 +52,11 @@
                 <img src="<?php echo htmlspecialchars($product['vehicleImg']); ?>" alt="<?php echo htmlspecialchars($product['vehicleName']); ?>" style="height: 200px; width: 200px;">
                 <p><?php echo htmlspecialchars($product['vehicleDes']); ?></p>
                 <p><?php echo htmlspecialchars($product['price']); ?></p>
-                <button onclick="confirmOrder()">Rent!</button>
+                <?php if (isset($_SESSION['Username'])){ ?>
+                    <button onclick="confirmOrder()">Rent!</button>
+                <?php } else { ?>
+                    <button type="submit" onclick="alert('Login First!')">Rent!</button></a>
+                <?php } ?>
                 <!-- Add more product details here -->
             </body>
             </html>
