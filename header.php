@@ -5,20 +5,25 @@
 </head>
 <body>
     <nav>
-        <ul type="none">
+        <ul>
             <li><a href="./index.php">Home</a></li>
             <li><a href="./browse.php">Browse</a></li>
             <li><a href="./orders.php">Orders</a></li>
             <li><a href="#">About Us</a></li>
-            <li style="float: right;">
-            <?php
+            <li class="dropdown">
+                <?php
                 session_start();
-                if(isset($_SESSION['Username'])){
-                    echo '<a href="#">'.$_SESSION['Username'].'</a>';
-                }else{
+                if (isset($_SESSION['Username'])) {
+                    echo '<button class="dropbtn">'.$_SESSION['Username'].'</button>';
+                    echo '<div class="dropdown-content">';
+                    echo '<a href="./profile.php">Profile</a>';
+                    echo '<a href="./logout.php">Log Out</a>';
+                    echo '</div>';
+                } else {
                     echo '<a href="./login.php">Login/Register</a>';
                 }
-            ?></li>
+                ?>
+            </li>
         </ul>
     </nav>
 </body>
