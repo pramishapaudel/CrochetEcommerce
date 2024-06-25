@@ -1,6 +1,6 @@
 <?php
-    require('./connection.php');
-    require('./header.php');
+    require('./includes/connection.php');
+    require('./includes/header.php');
 
     if (isset($_SESSION["userID"])) {
         $userID = $_SESSION["userID"];
@@ -60,7 +60,7 @@
         if(confirm('Are you sure you want to cancel this order: ')) {
             $.ajax({
                 type: "POST",
-                url: "delete_order.php",
+                url: "./includes/delete_order.php",
                 data: { orderID: orderID },
                 success: function(response) {
                     if(response === "success") {

@@ -1,6 +1,6 @@
 <?php
-    require('./header.php');
-    require('./connection.php');
+    require('./includes/header.php');
+    require('./includes/connection.php');
     $select = 'SELECT * FROM products';
 
     $result = $conn->query($select);

@@ -1,6 +1,6 @@
 <?php
-    require('./header.php');
-    require('./connection.php');
+    require('./includes/header.php');
+    require('./includes/connection.php');
 
     // Check if 'id' parameter is set in the URL
     if (isset($_GET['id'])) {
@@ -31,7 +31,7 @@
 
                             $.ajax({
                                 type: "POST",
-                                url: "confirm_order.php",
+                                url: "./includes/confirm_order.php",
                                 data: {
                                     vehicleID: vehicleID,
                                     userID: userID

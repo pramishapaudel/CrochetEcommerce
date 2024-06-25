@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,12 +13,11 @@
             <li><a href="#">About Us</a></li>
             <li class="dropdown">
                 <?php
-                session_start();
                 if (isset($_SESSION['Username'])) {
                     echo '<button class="dropbtn">'.$_SESSION['Username'].'</button>';
                     echo '<div class="dropdown-content">';
                     echo '<a href="./profile.php">Profile</a>';
-                    echo '<a href="./logout.php">Log Out</a>';
+                    echo '<a href="./includes/logout.php">Log Out</a>';
                     echo '</div>';
                 } else {
                     echo '<a href="./login.php">Login/Register</a>';

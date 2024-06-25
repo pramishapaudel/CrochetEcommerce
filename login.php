@@ -1,6 +1,6 @@
 <?php 
-    require('./connection.php');
-    require('./header.php');
+    require('./includes/connection.php');
+    require('./includes/header.php');
     if($_SERVER['REQUEST_METHOD']=='POST'){
         $phone = $_POST['phone'];
         //check passwords
