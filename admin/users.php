@@ -45,10 +45,12 @@
         <table>
             <thead>
                 <tr>
-                    <th>User ID</th>
                     <th>Name</th>
                     <th>Contact</th>
-                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>DOB</th>
+                    <th>Citizenship no</th>
+                    <th>License no</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -56,12 +58,14 @@
                 <?php
                 while ($row = $result->fetch_assoc()) {
                 ?>
-                <tr id="user-<?php echo $row['userID']; ?>">
-                    <td><?php echo $row['userID']; ?></td>
+                <tr id="user-<?php echo $row['UserID']; ?>">
                     <td><?php echo $row['Name']; ?></td>
                     <td><?php echo $row['Contact']; ?></td>
-                    <td><?php echo $row['Email']; ?></td>
-                    <td><button onclick="deleteUser(<?php echo $row['userID']; ?>)">Delete</button></td>
+                    <td><?php echo $row['Gender']; ?></td>
+                    <td><?php echo $row['DOB']; ?></td>
+                    <td><?php echo $row['Citizenship_no']; ?></td>
+                    <td><?php echo $row['License_no']; ?></td>
+                    <td><button onclick="deleteUser(<?php echo $row['UserID']; ?>)">Delete</button></td>
                 </tr>
                 <?php 
                 }
