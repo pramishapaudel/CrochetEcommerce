@@ -28,12 +28,13 @@
             // Prepare the SQL statement to prevent SQL injection
             $stmt = $conn->prepare('INSERT INTO orders (vehicleID, userID, fordate, status) VALUES (?, ?, ?, ?)');
             $stmt->bind_param('iiss', $vehicleID, $userID, $fordate, $status);
+            
+            $stmt2 = $conn->prepare('UPDATE products SET vehiclePending = vehiclePending + 1 WHERE vehicleID = ?');
+            $stmt2->bind_param('i',$vehicleID);
 
             if ($stmt->execute()) {
-                echo "Order confirmed successfully!";
-                // Optionally, you can redirect the user to another page
-                // header("location: success.php");
-                // exit();
+                $stmt2->execute();
+                echo "success";
             } else {
                 echo "Error: " . $stmt->error;
             }

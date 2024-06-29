@@ -1,23 +1,42 @@
 <?php
-    require('../../includes/connection.php');
+require('../../includes/connection.php');
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['userID'])) {
-        $userID = intval($_POST['userID']);
+        $userID = $_POST['userID'];
 
-        // SQL to delete a user
-        $sql = "DELETE FROM users WHERE userID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $userID);
+        // Begin a transaction
+        $conn->begin_transaction();
 
-        if ($stmt->execute()) {
+        try {
+            // Delete related records in other tables first
+            $stmt1 = $conn->prepare("DELETE FROM orders WHERE userID = ?");
+            $stmt1->bind_param('i', $userID);
+            $stmt1->execute();
+            $stmt1->close();
+
+            // Now delete the user
+            $stmt2 = $conn->prepare("DELETE FROM users WHERE UserID = ?");
+            $stmt2->bind_param('i', $userID);
+            $stmt2->execute();
+            $stmt2->close();
+
+            // Commit the transaction
+            $conn->commit();
+
             echo 'success';
-        } else {
-            echo 'error';
+        } catch (Exception $e) {
+            // An exception has been thrown
+            // Rollback the transaction
+            $conn->rollback();
+            echo 'Error: ' . $e->getMessage();
         }
 
-        $stmt->close();
         $conn->close();
     } else {
-        echo 'error';
+        echo 'Invalid user ID.';
     }
+} else {
+    echo 'Invalid request method.';
+}
 ?>

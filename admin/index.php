@@ -10,7 +10,7 @@
 
     // Fetch today's orders
     $today = date('Y-m-d');
-    $query = "SELECT orders.orderID,orders.status ,orders.fordate, users.name as userName, products.vehicleName, products.price, orders.date 
+    $query = "SELECT orders.orderID,orders.status ,orders.fordate, users.name as userName, products.vehicleName,products.vehicleID, products.price, orders.date
               FROM orders 
               JOIN users ON orders.userID = users.userID 
               JOIN products ON orders.vehicleID = products.vehicleID 
@@ -42,11 +42,11 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        function handleOrder(action, orderID) {
+        function handleOrder(action, orderID, vehicleID) {
             $.ajax({
                 type: "POST",
                 url: "./includes/handle_order.php",
-                data: { action: action, orderID: orderID },
+                data: { action: action, orderID: orderID, vehicleID: vehicleID},
                 success: function(response) {
                     if(response === 'success') {
                         document.getElementById('order-' + orderID).remove();
@@ -86,8 +86,8 @@
                             echo "<td>" . $row['date'] . "</td>";
                             echo "<td>" . $row['fordate'] . "</td>";
                             echo "<td>
-                                        <button onclick='handleOrder(\"accept\", " . $row['orderID'] . ")'>Accept</button>
-                                        <button onclick='handleOrder(\"reject\", " . $row['orderID'] . ")'>Reject</button>
+                                        <button onclick='handleOrder(\"accept\", " . $row['orderID'] . "," . $row['vehicleID'] . ")'>Accept</button>
+                                        <button onclick='handleOrder(\"reject\", " . $row['orderID'] . ", " . $row['vehicleID'] . ")'>Reject</button>
                                 </td>";
                             echo "</tr>";
                     }

@@ -1,27 +1,36 @@
 <?php
-    require('./includes/header.php');
-    require('./includes/connection.php');
+require('./includes/header.php');
+require('./includes/connection.php');
 
-    // Check if 'id' parameter is set in the URL
-    if (isset($_GET['id'])) {
-        $vID = $_GET['id'];
+// Check if 'id' parameter is set in the URL
+if (isset($_GET['id'])) {
+    $vID = $_GET['id'];
+    $uid = $_SESSION['userID'];
 
-        // Prepare a SQL statement to prevent SQL injection
-        $stmt = $conn->prepare('SELECT * FROM products WHERE vehicleID = ?');
-        $stmt->bind_param('i', $vID);
-        $stmt->execute();
-        $res = $stmt->get_result();
+    // Prepare a SQL statement to prevent SQL injection
+    $stmt = $conn->prepare('SELECT * FROM products WHERE vehicleID = ?');
+    $stmt->bind_param('i', $vID);
+    $stmt->execute();
+    $res = $stmt->get_result();
 
-        $stmt1 = $conn->prepare('SELECT * FROM users WHERE UserID = ".$_SESSION["userID"]."');
-        $stmt1->execute();
-        $res1 = $stmt1->get_result();
-        if ($res1->num_rows > 0) {
-            $resuser = $res1->fetch_assoc();
-        }
+    // Fetch user details
+    $stmt1 = $conn->prepare('SELECT * FROM users WHERE UserID = ?');
+    $stmt1->bind_param('i', $uid);
+    $stmt1->execute();
+    $res1 = $stmt1->get_result();
+    if ($res1->num_rows > 0) {
+        $resuser = $res1->fetch_assoc();
+    }
 
-        // Check if the product exists
-        if ($res->num_rows > 0) {
-            $product = $res->fetch_assoc();
+    // Check if the user has active orders
+    $stmt2 = $conn->prepare('SELECT * FROM orders WHERE userID = ? AND status != "returned"');
+    $stmt2->bind_param('i', $uid);
+    $stmt2->execute();
+    $activeOrders = $stmt2->get_result()->num_rows;
+
+    // Check if the product exists
+    if ($res->num_rows > 0) {
+        $product = $res->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +95,6 @@
         }
     </style>
     <script src="./assets/js/script.js"></script>
-
 </head>
 <body>
     <main>
@@ -97,15 +105,20 @@
                 <p><?php echo nl2br(htmlspecialchars($product['vehicleDes'])); ?></p>
                 <p>Price: Rs<?php echo htmlspecialchars($product['price']); ?></p>
                 <?php if (isset($_SESSION['Username'])) {
-                            if($resuser['status']=='verified'){ ?>
-                                <div class="renting-form">
-                                    <label for="rentDate">Rent Date:</label>
-                                    <input type="date" id="rentDate" name="rentDate" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" required>
-                                    <button onclick="confirmOrder(<?php echo htmlspecialchars($vID) . ', ' . htmlspecialchars($_SESSION['userID']); ?>)" id="rent">Rent!</button>
-                                </div>
-                            <?php } else {
-                                echo "alert('verify first')";
-                                }}else{?>
+                    if ($resuser['status'] == 'verified') {
+                        if ($activeOrders == 0) { ?>
+                            <div class="renting-form">
+                                <label for="rentDate">Rent Date:</label>
+                                <input type="date" id="rentDate" name="rentDate" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" required>
+                                <button onclick="confirmOrder(<?php echo htmlspecialchars($vID) . ', ' . htmlspecialchars($_SESSION['userID']); ?>)" id="rent">Rent!</button>
+                            </div>
+                        <?php } else { ?>
+                            <p>You already have an active booking. Complete or return it before renting another vehicle.</p>
+                        <?php }
+                    } else { ?>
+                        <p>Please verify your account first.</p>
+                    <?php }
+                } else { ?>
                     <button onclick="alert('Login First!')">Rent!</button>
                 <?php } ?>
             </div>
@@ -114,14 +127,16 @@
 </body>
 </html>
 <?php
-        } else {
-            echo "Product not found.";
-        }
-
-        // Close the statement and the connection
-        $stmt->close();
-        $conn->close();
     } else {
-        echo "No product ID provided.";
+        echo "Product not found.";
     }
+
+    // Close the statements and the connection
+    $stmt->close();
+    $stmt1->close();
+    $stmt2->close();
+    $conn->close();
+} else {
+    echo "No product ID provided.";
+}
 ?>

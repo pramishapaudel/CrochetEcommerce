@@ -72,7 +72,8 @@ require('./includes/header.php');
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        alert(response);
+                        document.getElementById('productForm').reset();
+                        alert(reponse);
                     },
                     error: function() {
                         alert('Error adding product.');

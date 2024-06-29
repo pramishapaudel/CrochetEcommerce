@@ -67,6 +67,7 @@
                         <p><?php echo $row['vehicleDes']; ?></p>
                         <p>Total:<?php echo $row['vehicleQuantity']; ?></p>
                         <p>Remaining:<?php echo $row['vehicleLeft']; ?></p>
+                        <p>Pending:<?php echo $row['vehiclePending']; ?></p>
                     </div>
             </div>
             <?php 

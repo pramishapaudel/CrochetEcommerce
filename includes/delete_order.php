@@ -10,7 +10,11 @@
         $stmt = $conn->prepare("DELETE FROM orders WHERE orderID = ? AND userID = ?");
         $stmt->bind_param('ii', $orderID, $userID);
 
+        $stmt2 = $conn->prepare('UPDATE products SET vehiclePending = vehiclePending - 1 WHERE vehicleID = ?');
+        $stmt2->bind_param('i',$vehicleID);
+
         if ($stmt->execute()) {
+            $stmt2->execute();
             echo "success";
         } else {
             echo "error";

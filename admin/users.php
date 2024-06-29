@@ -121,7 +121,7 @@
                         if(response === 'success') {
                             $('#user-' + userID).remove();
                         } else {
-                            alert('Error deleting user.');
+                            alert('Error deleting user.'+response);
                         }
                     },
                     error: function() {

@@ -51,8 +51,8 @@
             <div>
                 <p><?php echo $row['vehicleName']; ?></p>
                 <p><?php echo $row['vehicleDes']; ?></p>
-                <p><?php echo $row['vehicleLeft']; ?></p>
-                <?php if($row['vehicleLeft'] > 0) {?>
+                <p>Remaining:<?php echo $row['vehicleLeft']-$row['vehiclePending']; ?></p>
+                <?php if($row['vehiclePending'] < $row['vehicleQuantity']) {?>
                     <a href="rent.php?id=<?php echo $row['vehicleID']; ?>"><button>Rent!</button></a>
                 <?php }else { ?>
                     <button disabled>Not Available</button>

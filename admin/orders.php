@@ -52,6 +52,8 @@
                 max-width: 100px;
             }
         </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="../assets/js/script.js"></script>
         </head>
         <body>
         <h1>Orders</h1>
@@ -65,6 +67,7 @@
                     <th>Vehicle Description</th>
                     <th>Vehicle Image</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,6 +82,11 @@
                     <td><?php echo $row['vehicleDes']; ?></td>
                     <td><img src="../<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>"></td>
                     <td><?php echo $row['status']; ?></td>
+                    <?php if ($row['status'] == 'complete') { ?>
+                            <td><button onclick='updateOrderStatus("pick", <?php echo $row['orderID']; ?>)'>Picked</button></td>
+                        <?php }if ($row['status'] == 'picked') { ?>
+                            <td><button onclick='updateOrderStatus("return", <?php echo $row['orderID']; ?>)'>Return</button></td>
+                    <?php } ?>
                 </tr>
                 <?php 
                 }

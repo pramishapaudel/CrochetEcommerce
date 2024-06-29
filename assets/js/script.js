@@ -13,7 +13,7 @@ function confirmOrder(vID,uID) {
                     rentDate: rentDate
                 },
                 success: function(response) {
-                    alert(response);
+                    window.location.reload();
                 },
                 error: function(xhr, status, error) {
                     alert("An error occurred: " + xhr.responseText);
@@ -22,5 +22,27 @@ function confirmOrder(vID,uID) {
         }else{
             alert("enter appropraite date");
         }
+    }
+}
+
+
+function updateOrderStatus(action, orderID) {
+    if(confirm("Are you sure you want to " + action + " this order?")) {
+        $.ajax({
+            url: '../admin/includes/update_order_status.php',
+            type: 'POST',
+            data: { orderID: orderID, action: action },
+            success: function(response) {
+                if(response === 'success') {
+                    alert("Order " + action + "d successfully!");
+                    location.reload();
+                } else {
+                    alert("Error: " + response);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert("An error occurred: " + xhr.responseText);
+            }
+        });
     }
 }
