@@ -1,23 +1,49 @@
 <?php
-    require('./connection.php');
+    // Include config file
+    require_once "./connection.php";
 
+    // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $vehicleID = $_POST['vehicleID'];
-        $userID = $_POST['userID'];
-
-        // Prepare the SQL statement to prevent SQL injection
-        $stmt = $conn->prepare('INSERT INTO orders (vehicleID, userID) VALUES (?, ?)');
-        $stmt->bind_param('ss', $vehicleID, $userID);
-
-        if ($stmt->execute()) {
-            echo "Order confirmed successfully!";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
-
-        // Close the statement and the connection
+        $userID = $_POST['userID']; // Use session userID for security
+        $fordate = $_POST['rentDate'];
+        $status = "pending";
+        
+        // Validate the vehicleID and userID exist in their respective tables
+        $stmt = $conn->prepare('SELECT COUNT(*) FROM products WHERE vehicleID = ?');
+        $stmt->bind_param('i', $vehicleID);
+        $stmt->execute();
+        $stmt->bind_result($vehicleCount);
+        $stmt->fetch();
         $stmt->close();
-        $conn->close();
+
+        $stmt = $conn->prepare('SELECT COUNT(*) FROM users WHERE userID = ?');
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+        $stmt->bind_result($userCount);
+        $stmt->fetch();
+        $stmt->close();
+
+        if ($vehicleCount > 0 && $userCount > 0) {
+            // Prepare the SQL statement to prevent SQL injection
+            $stmt = $conn->prepare('INSERT INTO orders (vehicleID, userID, fordate, status) VALUES (?, ?, ?, ?)');
+            $stmt->bind_param('iiss', $vehicleID, $userID, $fordate, $status);
+
+            if ($stmt->execute()) {
+                echo "Order confirmed successfully!";
+                // Optionally, you can redirect the user to another page
+                // header("location: success.php");
+                // exit();
+            } else {
+                echo "Error: " . $stmt->error;
+            }
+
+            // Close the statement and the connection
+            $stmt->close();
+            $conn->close();
+        } else {
+            echo "Invalid vehicle ID or user ID.";
+        }
     } else {
         echo "Invalid request.";
     }

@@ -32,6 +32,8 @@
                 $_SESSION['Phone']=$row['Contact'];
                 $_SESSION['Password']=$row['Password'];
                 $_SESSION['userID']=$row['UserID'];
+                $_SESSION['CitizenImg']=$row['CitizenshipImg'];
+                $_SESSION['LicenseImg']=$row['LicenseImg'];
             }else{
                 //check if number exists in admins table
                 $sql1="SELECT * FROM admins WHERE adminNum = $phone";

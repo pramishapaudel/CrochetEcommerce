@@ -48,6 +48,9 @@ require('./includes/header.php');
         <label for="price">Price:</label>
         <input type="number" id="price" name="price" required>
 
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+
         <label for="vehicleImg">Vehicle Image:</label>
         <input type="file" id="vehicleImg" name="vehicleImg" accept="image/*" required>
 

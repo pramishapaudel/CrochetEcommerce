@@ -71,6 +71,9 @@
                 <th>DOB</th>
                 <th>Citizenship No</th>
                 <th>License No</th>
+                <th>Citizenship Image</th>
+                <th>License Image</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -85,7 +88,20 @@
                 <td><?php echo htmlspecialchars($row['DOB']); ?></td>
                 <td><?php echo htmlspecialchars($row['Citizenship_no']); ?></td>
                 <td><?php echo htmlspecialchars($row['License_no']); ?></td>
-                <td><button onclick="deleteUser(<?php echo $row['UserID']; ?>)">Delete</button></td>
+                <td><a href="<?php echo htmlspecialchars($row['CitizenshipImg']); ?>" target="_blank">
+                    <img src="<?php echo htmlspecialchars($row['CitizenshipImg']); ?>" alt="Citizenship Image" style="cursor: pointer; width: 200px; height: 150px;">
+                    </a>
+                </td>
+                <td>
+                    <a href="<?php echo htmlspecialchars($row['LicenseImg']); ?>" target="_blank">
+                    <img src="<?php echo htmlspecialchars($row['LicenseImg']); ?>" alt="License Image" style="cursor: pointer; width: 200px; height: 150px;">
+                    </a>
+                </td>
+                <td><?php echo htmlspecialchars($row['status']); ?></td>
+                <td>
+                    <button onclick="verifyUser(<?php echo $row['UserID']; ?>)">Verify</button>
+                    <button onclick="deleteUser(<?php echo $row['UserID']; ?>)">Delete</button>
+                </td>
             </tr>
             <?php 
             }
@@ -98,7 +114,7 @@
         function deleteUser(userID) {
             if(confirm("Are you sure you want to delete this user?")) {
                 $.ajax({
-                    url: 'delete_user.php',
+                    url: './includes/delete_user.php',
                     type: 'POST',
                     data: { userID: userID },
                     success: function(response) {
@@ -110,6 +126,27 @@
                     },
                     error: function() {
                         alert('Error deleting user.');
+                    }
+                });
+            }
+        }
+        function verifyUser(userID) {
+            if (confirm("Are you sure you want to verify this user?")) {
+                $.ajax({
+                    url: './includes/verify_user_process.php',
+                    type: 'POST',
+                    data: { userID: userID },
+                    success: function(response) {
+                        if (response === 'success') {
+                            alert('User verified successfully!');
+                            // Optionally, refresh the page or update the UI
+                            location.reload();
+                        } else {
+                            alert('Error verifying user: ' + response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error verifying user: ' + xhr.responseText);
                     }
                 });
             }

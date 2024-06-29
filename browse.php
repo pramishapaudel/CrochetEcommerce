@@ -1,7 +1,7 @@
 <?php
     require('./includes/header.php');
     require('./includes/connection.php');
-    $select = 'SELECT * FROM products';
+    $select = 'SELECT * FROM products ORDER BY vehicleLeft DESC';
 
     $result = $conn->query($select);
 
@@ -18,12 +18,12 @@
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px; /* Space between items */
+            gap: 25px; /* Space between items */
         }
         .product {
             border: 1px solid red;
             height: 300px;
-            width: 300px;
+            width: 278px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,6 +35,9 @@
         }
         .product div {
             text-align: center;
+        }
+        p{
+            font-size: 1em;
         }
     </style>
 </head>
@@ -48,7 +51,12 @@
             <div>
                 <p><?php echo $row['vehicleName']; ?></p>
                 <p><?php echo $row['vehicleDes']; ?></p>
-                <a href="rent.php?id=<?php echo $row['vehicleID']; ?>"><button>Rent!</button></a>
+                <p><?php echo $row['vehicleLeft']; ?></p>
+                <?php if($row['vehicleLeft'] > 0) {?>
+                    <a href="rent.php?id=<?php echo $row['vehicleID']; ?>"><button>Rent!</button></a>
+                <?php }else { ?>
+                    <button disabled>Not Available</button>
+                <?php } ?>
             </div>
         </div>
         <?php 

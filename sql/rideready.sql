@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2024 at 04:03 AM
+-- Generation Time: Jun 29, 2024 at 03:32 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -51,21 +51,13 @@ CREATE TABLE `orders` (
   `orderID` int(50) NOT NULL,
   `vehicleID` int(50) NOT NULL,
   `userID` int(50) NOT NULL,
-  `date` date NOT NULL DEFAULT current_timestamp()
+  `date` date NOT NULL DEFAULT current_timestamp(),
+  `fordate` date NOT NULL,
+  `status` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `orders`
---
 
-INSERT INTO `orders` (`orderID`, `vehicleID`, `userID`, `date`) VALUES
-(4, 2, 3, '2024-06-23'),
-(6, 1, 2, '2024-06-24'),
-(7, 1, 2, '2024-06-24');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `products`
 --
 
@@ -74,16 +66,21 @@ CREATE TABLE `products` (
   `vehicleName` varchar(255) NOT NULL,
   `vehicleDes` varchar(255) NOT NULL,
   `vehicleImg` varchar(255) NOT NULL,
-  `price` int(50) NOT NULL
+  `price` int(50) NOT NULL,
+  `vehicleQuantity` int(50) NOT NULL,
+  `vehicleLeft` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`vehicleID`, `vehicleName`, `vehicleDes`, `vehicleImg`, `price`) VALUES
-(1, 'Pulsar N160', 'Description Here', './img/6675a5488356c9.39091678.png', 1500),
-(2, 'FZ V3', 'Description', 'img/66756a9a04e9e4.03732151.png', 2000);
+INSERT INTO `products` (`vehicleID`, `vehicleName`, `vehicleDes`, `vehicleImg`, `price`, `vehicleQuantity`, `vehicleLeft`) VALUES
+(1, 'Pulsar N160', 'Description Here', './img/6675a5488356c9.39091678.png', 1500, 5, 0),
+(2, 'FZ V3', 'Description', 'img/66756a9a04e9e4.03732151.png', 2000, 2, 0),
+(4, 'FZ V2', 'test description', 'img/6675a5488356c9.39091678.png', 1000, 8, 0),
+(5, 'pulsar 220', 'dest', 'img/66756a9a04e9e4.03732151.png', 1000, 10, 0),
+(7, 'duke', 'eraasdf', 'img/Screenshot 2024-03-08 180015.png', 2000, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -99,17 +96,12 @@ CREATE TABLE `users` (
   `Contact` varchar(10) NOT NULL,
   `Citizenship_no` varchar(100) NOT NULL,
   `License_no` varchar(100) NOT NULL,
-  `Password` varchar(255) NOT NULL
+  `CitizenshipImg` varchar(255) DEFAULT NULL,
+  `LicenseImg` varchar(255) DEFAULT NULL,
+  `Password` varchar(255) NOT NULL,
+  `status` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`UserID`, `Name`, `DOB`, `Gender`, `Contact`, `Citizenship_no`, `License_no`, `Password`) VALUES
-(1, 'Rabin Hemba', '2058-11-02', 'Male', '9840430486', '123456789', '987654321', '12345678'),
-(2, 'binod ', '2003-08-01', 'Male', '9843651027', '141546', '56454', '$2y$10$fgKMlwtpZE9AYKeubILMROfh6CT86.7GXicgaZMnUuXXUmt8aNz5m'),
-(3, 'rabin', '2002-02-14', 'Male', '9845358950', '123456789', '987654321', '$2y$10$V4pZupCEZCKJBRhGL3dZneBLKg62fYGK/TwQjjMwWOOezXkK1XVO.');
 
 --
 -- Indexes for dumped tables
@@ -125,7 +117,9 @@ ALTER TABLE `admins`
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
-  ADD PRIMARY KEY (`orderID`);
+  ADD PRIMARY KEY (`orderID`),
+  ADD KEY `userID` (`userID`),
+  ADD KEY `vehicleID` (`vehicleID`);
 
 --
 -- Indexes for table `products`
@@ -153,19 +147,30 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `orderID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `orderID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `vehicleID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `vehicleID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `UserID` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`UserID`),
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`vehicleID`) REFERENCES `products` (`vehicleID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

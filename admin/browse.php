@@ -18,12 +18,12 @@
             .container {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 20px; /* Space between items */
+                gap: 25px; /* Space between items */
             }
             .product {
                 border: 1px solid red;
-                height: 300px;
-                width: 300px;
+                height: 320px;
+                width: 278px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -48,6 +48,9 @@
                 padding: 5px;
                 cursor: pointer;
             }
+            p{
+                font-size: 1em;
+            }
         </style>
     </head>
     <body>
@@ -62,6 +65,8 @@
                     <div>
                         <p><?php echo $row['vehicleName']; ?></p>
                         <p><?php echo $row['vehicleDes']; ?></p>
+                        <p>Total:<?php echo $row['vehicleQuantity']; ?></p>
+                        <p>Remaining:<?php echo $row['vehicleLeft']; ?></p>
                     </div>
             </div>
             <?php 

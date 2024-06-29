@@ -1,10 +1,11 @@
 <?php
-    require('../../connection.php');
+    require('../../includes/connection.php');
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $vehicleName = $_POST['vehicleName'];
         $vehicleDes = $_POST['vehicleDes'];
         $price = $_POST['price'];
+        $quantity = $_POST['quantity'];
         $vehicleImg = $_FILES['vehicleImg'];
 
         // Directory where images will be uploaded
@@ -45,8 +46,8 @@
         }
 
         // Insert product data into database
-        $stmt = $conn->prepare("INSERT INTO products (vehicleName, vehicleDes, price, vehicleImg) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssis", $vehicleName, $vehicleDes, $price, $targetFile);
+        $stmt = $conn->prepare("INSERT INTO products (vehicleName, vehicleDes, price, vehicleImg, vehicleQuantity, vehicleLeft) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssisss", $vehicleName, $vehicleDes, $price, $targetFile, $quantity, $quantity);
 
         if ($stmt->execute()) {
             echo "Product added successfully.";

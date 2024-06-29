@@ -10,7 +10,7 @@
             <li><a href="./index.php">Home</a></li>
             <li><a href="./browse.php">Browse</a></li>
             <li><a href="./orders.php">Orders</a></li>
-            <li><a href="#">About Us</a></li>
+            <li><a href="./aboutus.php">About Us</a></li>
             <li class="dropdown">
                 <?php
                 if (isset($_SESSION['Username'])) {
@@ -26,5 +26,12 @@
             </li>
         </ul>
     </nav>
+    <?php
+        if (isset($_SESSION['Username'])) {
+            if(empty($_SESSION['CitizenImg']) && empty($_SESSION['LicenseImg'])) {
+                echo '<marquee direction="left" style="background-color:red">Verify your account to start rentig. <a href="./includes/verify_acc.php"> Verify Now?</a></marquee>';
+            }
+        }
+    ?>
 </body>
 </html>

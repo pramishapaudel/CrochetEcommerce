@@ -8,6 +8,7 @@
         SELECT 
             orders.orderID,
             orders.date,
+            orders.status,
             users.Name AS userName,
             users.Contact AS userContact,
             products.vehicleName,
@@ -57,13 +58,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>Order ID</th>
                     <th>Order Date</th>
                     <th>User Name</th>
                     <th>User Contact</th>
                     <th>Vehicle Name</th>
                     <th>Vehicle Description</th>
                     <th>Vehicle Image</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,13 +72,13 @@
                 while ($row = $result->fetch_assoc()) {
                 ?>
                 <tr>
-                    <td><?php echo $row['orderID']; ?></td>
                     <td><?php echo $row['date']; ?></td>
                     <td><?php echo $row['userName']; ?></td>
                     <td><?php echo $row['userContact']; ?></td>
                     <td><?php echo $row['vehicleName']; ?></td>
                     <td><?php echo $row['vehicleDes']; ?></td>
                     <td><img src="../<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>"></td>
+                    <td><?php echo $row['status']; ?></td>
                 </tr>
                 <?php 
                 }
