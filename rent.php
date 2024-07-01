@@ -5,7 +5,9 @@ require('./includes/connection.php');
 // Check if 'id' parameter is set in the URL
 if (isset($_GET['id'])) {
     $vID = $_GET['id'];
-    $uid = $_SESSION['userID'];
+    if(isset($_SESSION['userID'])){
+        $uid = $_SESSION['userID'];
+    }
 
     // Prepare a SQL statement to prevent SQL injection
     $stmt = $conn->prepare('SELECT * FROM products WHERE vehicleID = ?');

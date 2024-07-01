@@ -37,7 +37,7 @@ require('./includes/header.php');
     </style>
 </head>
 <body>
-    <h1>Add New Product</h1>
+    <center><h1>Add New Product</h1></center>
     <form id="productForm" method="post" enctype="multipart/form-data">
         <label for="vehicleName">Vehicle Name:</label>
         <input type="text" id="vehicleName" name="vehicleName" required>
