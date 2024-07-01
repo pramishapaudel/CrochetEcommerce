@@ -9,6 +9,14 @@
             $conn->begin_transaction();
 
             try {
+                // Retrieve the image path before deleting the vehicle
+                $stmt0 = $conn->prepare("SELECT vehicleImg FROM products WHERE vehicleID = ?");
+                $stmt0->bind_param('i', $vehicleID);
+                $stmt0->execute();
+                $stmt0->bind_result($vehicleImg);
+                $stmt0->fetch();
+                $stmt0->close();
+
                 // Delete related records in the orders table first
                 $stmt1 = $conn->prepare("DELETE FROM orders WHERE vehicleID = ?");
                 $stmt1->bind_param('i', $vehicleID);
@@ -23,6 +31,11 @@
 
                 // Commit the transaction
                 $conn->commit();
+
+                // Delete the image file from the server
+                if (file_exists($vehicleImg)) {
+                    unlink($vehicleImg);
+                }
 
                 echo 'success';
             } catch (Exception $e) {

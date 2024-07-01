@@ -23,7 +23,9 @@
                 echo "<script>alert('Incorrect Password');</script>";
             }
         }else{
-            //check if number available in users table
+            if(empty($phone)){
+                echo "<script>alert('Number required');</script>";
+            }else{
             $sql="SELECT * FROM users WHERE Contact = $phone";
             $result = $conn->query($sql);
             if($result->num_rows==1){
@@ -47,12 +49,13 @@
                 }else{
                     //if not available nowhere ask for register
                     echo "<script>
-                    if(confirm('Email not registered! Wanna Register?')==true){
+                    if(confirm('Number not registered! Wanna Register?')==true){
                         window.location.replace('register.php');
                     };</script>";
                 }
             }
         }
+    }
     }
 ?>
 <!DOCTYPE html>
@@ -68,11 +71,11 @@
         <h1>Welcome Riders!</h1>
         <h2>Log in!</h2>
         <label for="phone">Phone:</label>
-        <input type="number" name="phone" id="phone" value="<?php if(isset($_SESSION['Phone'])){ echo @$_SESSION['Phone'];} else{echo @$_SESSION['admPhone'];}?>" maxlength="10" minlength="10"><br><br>
+        <input type="number" name="phone" id="phone" value="<?php if(isset($_SESSION['Phone'])){ echo @$_SESSION['Phone'];} else{echo @$_SESSION['admPhone'];}?>" maxlength="10" minlength="10" autofocus><br><br>
         <?php 
             if(isset($_SESSION['Password']) || isset($_SESSION['admPassword'])){
                 echo '<label for="password">Password:</label>
-                <input type="password" name="password" id="password" maxlength="255" minlength="8"><br><br>';
+                <input type="password" name="password" id="password" maxlength="255" minlength="8" autofocus><br><br>';
             }
         ?>
         <button id="login">Login</button>

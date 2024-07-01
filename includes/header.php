@@ -29,7 +29,7 @@
     <?php
         if (isset($_SESSION['Username'])) {
             if(empty($_SESSION['CitizenImg']) && empty($_SESSION['LicenseImg'])) {
-                echo '<marquee direction="left" style="background-color:red">Verify your account to start rentig. <a href="./includes/verify_acc.php"> Verify Now?</a></marquee>';
+                echo '<marquee direction="left" style="background-color:red">Verify your account to start rentig. <a href="./includes/verify_acc.php?id='.$_SESSION['userID'].'"> Verify Now?</a></marquee>';
             }
         }
     ?>

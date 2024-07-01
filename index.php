@@ -10,7 +10,7 @@
 <body>
     <div class="center">
         <p>Welcome to<br><span>RIDEREADY RENTALS</span><br>The place where you can get to rent two wheelers of your choice.</p>
-        <br><button id="goto">GO RENT!</button>
+        <br><button id="goto"><a href="./browse.php" style="text-decoration: none;color:black">GO RENT!</a></button>
     </div>
 </body>
 </html>

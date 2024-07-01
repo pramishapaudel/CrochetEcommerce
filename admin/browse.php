@@ -32,7 +32,7 @@
                 position: relative;
             }
             .product img {
-                height: 100px;
+                height: 90px;
                 width: 100px;
             }
             .product div {
@@ -64,7 +64,7 @@
                     <img src="../<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>">
                     <div>
                         <p><?php echo $row['vehicleName']; ?></p>
-                        <p><?php echo $row['vehicleDes']; ?></p>
+                        <p><?php echo substr($row['vehicleDes'], 0, 50); ?></p>
                         <p>Total:<?php echo $row['vehicleQuantity']; ?></p>
                         <p>Remaining:<?php echo $row['vehicleLeft']; ?></p>
                         <p>Pending:<?php echo $row['vehiclePending']; ?></p>

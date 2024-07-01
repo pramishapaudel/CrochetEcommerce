@@ -1,12 +1,7 @@
 <?php
 require('./connection.php');
-require('../includes/header.php');
-
-// Check if the user is logged in
-if (!isset($_SESSION['userID'])) {
-    header("Location: login.php");
-    exit();
-}
+// include('./header.php');
+session_start();
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -61,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($stmt->execute()) {
                 echo "The files have been uploaded and records updated.";
+                header('Location: ../index.php');
             } else {
                 echo "Error: " . $stmt->error;
             }

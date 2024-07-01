@@ -50,7 +50,7 @@
             <img src="<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>">
             <div>
                 <p><?php echo $row['vehicleName']; ?></p>
-                <p><?php echo $row['vehicleDes']; ?></p>
+                <p><?php echo substr($row['vehicleDes'], 0, 50); ?></p>
                 <p>Remaining:<?php echo $row['vehicleLeft']-$row['vehiclePending']; ?></p>
                 <?php if($row['vehiclePending'] < $row['vehicleQuantity']) {?>
                     <a href="rent.php?id=<?php echo $row['vehicleID']; ?>"><button>Rent!</button></a>
@@ -71,4 +71,5 @@
     }
 
     $conn->close();
+    include('includes\footer.php');
 ?>
