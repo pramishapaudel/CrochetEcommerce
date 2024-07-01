@@ -106,7 +106,7 @@ if (isset($_GET['id'])) {
                 <p>Price: Rs<?php echo htmlspecialchars($product['price']); ?></p>
                 <?php if (isset($_SESSION['Username'])) {
                     if ($resuser['status'] == 'verified') {
-                        if ($activeOrders == 0) { ?>
+                        if ($activeOrders < 1) { ?>
                             <div class="renting-form">
                                 <label for="rentDate">Rent Date:</label>
                                 <input type="date" id="rentDate" name="rentDate" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+2 days')); ?>" required>
