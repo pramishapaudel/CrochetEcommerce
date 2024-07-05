@@ -113,11 +113,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form action="verify_acc.php" method="POST" enctype="multipart/form-data">
             <div>
                 <label for="citizenship">Upload Citizenship Document:</label>
-                <input type="file" name="citizenship" id="citizenship" required>
+                <input type="file" accept=".jpg .jpeg .png" name="citizenship" id="citizenship" required>
             </div>
             <div>
                 <label for="license">Upload License Document:</label>
-                <input type="file" name="license" id="license" required>
+                <input type="file" accept=".jpg .jpeg .png" name="license" id="license" required>
             </div>
             <button type="submit">Submit</button>
         </form>

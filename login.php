@@ -11,6 +11,7 @@
                 header('Location: ./index.php');
             }else{
                 unset($_SESSION['Password']);
+                echo "<script>window.location.back();</script>";
                 echo "<script>alert('Incorrect Password');</script>";
             }
         }else if(isset($phone) && isset($_SESSION['admPassword'])){
