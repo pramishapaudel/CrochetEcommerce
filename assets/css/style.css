@@ -31,7 +31,7 @@ nav ul li a:hover{
     color: rgb(82, 5, 5);
     padding: 14px 16px;
     background-color: inherit;
-    font-family: inherit;
+    font-family: Merriweather, serif ;
     margin: 0;
     margin-top: -20px;
     font-weight: 600px;
@@ -63,12 +63,17 @@ nav ul li a:hover{
     display: block;
 }
 
+/*index.php*/
 
+body {
+    background-image: url('admin\img\flower.jpg'); /* Adjust the path as needed */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+}
 
-/*-------------------index.php-------------------*/
-/* body {
-    background-color: rebeccapurple;
-} */
 .center {
     position: absolute;
     top: 50%;
@@ -77,15 +82,18 @@ nav ul li a:hover{
     padding: 10px;
     text-align: center;
 }
-p{
+
+p {
     font-size: 1.5em;
 }
-span{
-    color:  rgb(95, 27, 15);
+
+span {
+    color: rgb(204, 80, 27);
     font-family: Verdana, Tahoma, sans-serif;
     font-size: 2em;
 }
-#goto{
+
+#goto {
     height: 55px;
     width: 175px;
     font-size: 1em;
@@ -94,11 +102,11 @@ span{
     border-radius: 15px;
     border-color: aquamarine;
 }
-#goto:hover{
+
+#goto:hover {
     background-color: rgb(255, 255, 255);
     border-color: rgb(71, 224, 71);
 }
-
 
 
 /*------------------login.php------------------*/

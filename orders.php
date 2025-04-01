@@ -6,10 +6,10 @@
         $userID = $_SESSION["userID"];
 
         // Prepare the SQL statement to prevent SQL injection
-        $stmt = $conn->prepare("SELECT orders.status, orders.orderID, products.vehicleID, products.vehicleName, products.vehicleDes, products.vehicleImg, products.price
+        $stmt = $conn->prepare("SELECT orders.status, orders.orderID, product.productId, product.productName, product.productDetails, product.productImage, product.productPrice
                             FROM orders 
-                            JOIN products ON orders.vehicleID = products.vehicleID 
-                            WHERE orders.userID = ? ORDER BY orders.fordate DESC");
+                            JOIN product ON orders.productId = product.productId 
+                            WHERE orders.userId = ? ORDER BY orders.date DESC");
         $stmt->bind_param('i', $userID);
 
         // Execute the statement
@@ -35,16 +35,16 @@
             // Fetch all orders and display them in the table
             while ($order = $result->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td style='border: none; text-align: center; padding: 8px;'><img src='" . htmlspecialchars($order['vehicleImg']) . "' alt='" . htmlspecialchars($order['vehicleName']) . "' style='height: 100px; width: 100px;'></td>";
-                echo "<td style='border: none; text-align: center; padding: 8px; colspan: 3'>" . htmlspecialchars($order['vehicleDes']) . "</td>";
-                echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['price']) . "</td>";
+                echo "<td style='border: none; text-align: center; padding: 8px;'><img src='" . htmlspecialchars($order['productImage']) . "' alt='" . htmlspecialchars($order['vehicleName']) . "' style='height: 100px; width: 100px;'></td>";
+                echo "<td style='border: none; text-align: center; padding: 8px; colspan: 3'>" . htmlspecialchars($order['productDetails']) . "</td>";
+                echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['productPrice']) . "</td>";
                 echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['status']) . "</td>";
                 if ($order['status'] == 'complete') {
                     echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Ready to pick" . "</td>";
                 }else if ($order['status'] == 'rejected'){
                     echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Try renting other vehicle" . "</td>";
                 }else{
-                    echo "<td style='border: none; text-align: center; padding: 8px;'><button onclick='deleteOrder(" . htmlspecialchars($order['orderID']) . ")'>Cancel Order</button></td>";
+                    echo "<td style='border: none; text-align: center; padding: 8px;'><button onclick='deleteOrder(" . htmlspecialchars($order['orderId']) . ")'>Cancel Order</button></td>";
                 }
                 echo "</tr>";
             }

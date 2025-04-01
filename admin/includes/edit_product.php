@@ -2,76 +2,76 @@
 require('../../includes/connection.php');
 
 if (isset($_GET['id'])) {
-    $vehicleID = $_GET['id'];
+    $productID = $_GET['id'];
 
     // Fetch the product details
-    $stmt = $conn->prepare('SELECT * FROM products WHERE vehicleID = ?');
-    $stmt->bind_param('i', $vehicleID);
+    $stmt = $conn->prepare('SELECT * FROM product WHERE productId = ?');
+    $stmt->bind_param('i', $productID);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $product = $result->fetch_assoc();
     } else {
-        echo "Product not found.";
-        exit();
+        die("Product not found.");
     }
 } else {
-    echo "No product ID provided.";
-    exit();
+    die("No product ID provided.");
 }
 
-// Update the product details
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $vehicleName = $_POST['vehicleName'];
-    $vehicleDes = $_POST['vehicleDes'];
+    $productName = $_POST['productName'];
+    $productDes = $_POST['productDes'];
     $price = $_POST['price'];
-    $vehicleQuantity = $_POST['vehicleQuantity'];
-    // $vehicleLeft = $_POST['vehicleLeft'];
-    // $vehiclePending = $_POST['vehiclePending'];
+    $productQuantity = $_POST['productQuantity'];
+    $productImage = $product['productImage']; // Default to existing image
 
-    // File upload handling
-    if (isset($_FILES['vehicleImg']) && $_FILES['vehicleImg']['error'] == 0) {
+    // Handle image upload
+    if (!empty($_FILES['productImage']['name'])) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-        $fileType = $_FILES['vehicleImg']['type'];
-        $fileSize = $_FILES['vehicleImg']['size'];
+        $fileType = $_FILES['productImage']['type'];
+        $fileSize = $_FILES['productImage']['size'];
         $maxSize = 2 * 1024 * 1024; // 2MB
 
         if (in_array($fileType, $allowedTypes) && $fileSize <= $maxSize) {
-            $target_dir = "../img/";
-            $target_file = $target_dir . basename($_FILES["vehicleImg"]["name"]);
-            if (move_uploaded_file($_FILES["vehicleImg"]["tmp_name"], $target_file)) {
-                // Delete the old image file if it's different
-                if ($product['vehicleImg'] && file_exists("../" . $product['vehicleImg']) && $product['vehicleImg'] !== $target_file) {
-                    unlink("../" . $product['vehicleImg']);
+            $target_dir = __DIR__ . "/../img/";  // Absolute path fix
+
+            // Ensure the img/ directory exists
+            if (!is_dir($target_dir)) {
+                mkdir($target_dir, 0777, true);
+            }
+
+            $fileName = basename($_FILES["productImage"]["name"]);
+            $target_file = $target_dir . $fileName;
+            $relativePath = "img/" . $fileName; // Path stored in DB
+
+            if (move_uploaded_file($_FILES["productImage"]["tmp_name"], $target_file)) {
+                // Delete old image if it's different
+                if (!empty($product['productImage']) && file_exists(__DIR__ . "/../" . $product['productImage']) && $product['productImage'] !== $relativePath) {
+                    unlink(__DIR__ . "/../" . $product['productImage']);
                 }
-                $vehicleImg = $target_file;
+                $productImage = $relativePath;
             } else {
-                echo "Sorry, there was an error uploading your file.";
-                exit();
+                die("Error uploading file.");
             }
         } else {
-            echo "Invalid file type or file size too large.";
-            exit();
+            die("Invalid file type or file size too large.");
         }
-    } else {
-        $vehicleImg = $product['vehicleImg'];
     }
 
-    // Update the product in the database
-    $stmt = $conn->prepare('UPDATE products SET vehicleName = ?, vehicleDes = ?, price = ?, vehicleQuantity = ?, vehicleLeft = ?, vehicleImg = ? WHERE vehicleID = ?');
-    $stmt->bind_param('ssdiisi', $vehicleName, $vehicleDes, $price, $vehicleQuantity, $vehicleQuantity, $vehicleImg, $vehicleID);
+    // Update product in database
+    $stmt = $conn->prepare('UPDATE product SET productName = ?, productDetails = ?, productPrice = ?, productQuantity = ?, productImage = ? WHERE productID = ?');
+    $stmt->bind_param('ssdisi', $productName, $productDes, $price, $productQuantity, $productImage, $productID);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Vehicle Updated Successfully');</script>";
-        header("Location: ../browse.php");
+        echo "<script>alert('Product Updated Successfully'); window.location.href='../browse.php';</script>";
     } else {
-        echo "Error: " . $stmt->error;
+        die("Error: " . $stmt->error);
     }
 
     $stmt->close();
     $conn->close();
-    exit();
 }
 ?>
 
@@ -116,31 +116,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         button:hover {
             background-color: #0056b3;
         }
+        img {
+            max-width: 100%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <center><h1>Edit Product</h1></center>
     <form method="post" enctype="multipart/form-data">
-        <label for="vehicleName">Vehicle Name:</label>
-        <input type="text" id="vehicleName" name="vehicleName" value="<?php echo htmlspecialchars($product['vehicleName']); ?>" required>
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" value="<?php echo htmlspecialchars($product['productName']); ?>" required>
 
-        <label for="vehicleDes">Vehicle Description:</label>
-        <textarea id="vehicleDes" name="vehicleDes" required><?php echo htmlspecialchars($product['vehicleDes']); ?></textarea>
+        <label for="productDes">Product Description:</label>
+        <textarea id="productDes" name="productDes" required><?php echo htmlspecialchars($product['productDetails']); ?></textarea>
 
         <label for="price">Price:</label>
-        <input type="number" id="price" name="price" value="<?php echo htmlspecialchars($product['price']); ?>" required>
+        <input type="number" id="price" name="price" value="<?php echo htmlspecialchars($product['productPrice']); ?>" required>
 
-        <label for="vehicleQuantity">Total Quantity:</label>
-        <input type="number" id="vehicleQuantity" name="vehicleQuantity" value="<?php echo htmlspecialchars($product['vehicleQuantity']); ?>" required>
+        <label for="productQuantity">Total Quantity:</label>
+        <input type="number" id="productQuantity" name="productQuantity" value="<?php echo htmlspecialchars($product['productQuantity']); ?>" required>
 
-        <!-- <label for="vehicleLeft">Remaining Quantity:</label>
-        <input type="number" id="vehicleLeft" name="vehicleLeft" value="<?php echo htmlspecialchars($product['vehicleLeft']); ?>" required>
+        <!-- Display current image -->
+        <?php if (!empty($product['productImage'])): ?>
+            <label>Current Image:</label>
+            <img src="../<?php echo htmlspecialchars($product['productImage']); ?>" alt="Product Image">
+        <?php endif; ?>
 
-        <label for="vehiclePending">Pending Quantity:</label>
-        <input type="number" id="vehiclePending" name="vehiclePending" value="<?php echo htmlspecialchars($product['vehiclePending']); ?>" required> -->
-
-        <label for="vehicleImg">Vehicle Image (Max 2MB, JPG/PNG):</label>
-        <input type="file" accept=".jpg, .png, .jpeg" id="vehicleImg" name="vehicleImg">
+        <label for="productImage">Product Image (Max 2MB, JPG/PNG):</label>
+        <input type="file" accept=".jpg, .png, .jpeg" id="productImage" name="productImage">
 
         <button type="submit">Update Product</button>
     </form>

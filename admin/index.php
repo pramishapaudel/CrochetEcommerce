@@ -10,10 +10,10 @@
 
     // Fetch today's orders
     $today = date('Y-m-d');
-    $query = "SELECT orders.orderID,orders.status ,orders.fordate, users.name as userName, products.vehicleName,products.vehicleID, products.price, orders.date
+    $query = "SELECT orders.orderId,orders.status ,orders.date, users.userName as userName, product.productName,product.productId, product.productPrice, orders.date
               FROM orders 
-              JOIN users ON orders.userID = users.userID 
-              JOIN products ON orders.vehicleID = products.vehicleID 
+              JOIN users ON orders.userId = users.userId 
+              JOIN product ON orders.productId = product.productId 
               WHERE DATE(orders.date) = '$today' AND orders.status = 'pending'
               ORDER BY orders.date DESC";
 

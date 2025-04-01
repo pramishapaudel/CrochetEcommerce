@@ -1,5 +1,6 @@
 <?php
-
+require('./includes/header.php');
+require('includes/connection.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,7 @@
     <link rel="stylesheet" href="./assets/css/style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family:Playfair Display, serif ;
             line-height: 1.6;
             margin: 0;
             padding: 0;
@@ -24,9 +25,9 @@
     </header>
     <div class="container">
         <div class="content">
-            <h2>Welcome to RIDEREADY</h2>
+            <h2>Welcome to Yarn-Joy </h2>
             <p>
-                It is a simple system committed to providing the best services to the customers. It was made to provide quality vehicles and easy renting way.
+                yarn-Joy is the business platform dedicated to satisfy the users demmand of crochet iteams including keyrings,bags,flowers and many more.Exoplore crochet items and enjoy the yarn.
             </p>
         </div>
         <div class="section">
@@ -42,9 +43,9 @@
             </p>
             <p>
                 <strong>Email:</strong>
-                <a href="mailto:hembarabin8@gmail.com">hembarabin8@gmail.com</a> or
-                <a href="mailto:bnodole01@gmail.com">bnodole01@gmail.com</a><br>
-                <strong>Phone:</strong> <a href="tel:+977 9843651027">9843651027</a> <a href="tel:+977 9840430486">9840430486</a>
+                <a href="mailto:ppramisha16@gmail.com">ppramisha16@gmail.com</a> or
+                <a href="mailto:ghimirenirjala18@gmail.com">ghimirenirjala18</a><br>
+                <strong>Phone:</strong> <a href="tel:+977 9828714530">9828714530</a> <a href="tel:+977 9861881083">9861881083</a>
             </p>
             <p>
                 We look forward to hearing from you!

@@ -39,11 +39,11 @@ require('./includes/header.php');
 <body>
     <center><h1>Add New Product</h1></center>
     <form id="productForm" method="post" enctype="multipart/form-data">
-        <label for="vehicleName">Vehicle Name:</label>
-        <input type="text" id="vehicleName" name="vehicleName" required>
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required>
 
-        <label for="vehicleDes">Vehicle Description:</label>
-        <textarea id="vehicleDes" name="vehicleDes" rows="4" required></textarea>
+        <label for="productDes">Product Description:</label>
+        <textarea id="productDes" name="productDes" rows="4" required></textarea>
 
         <label for="price">Price:</label>
         <input type="number" id="price" name="price" required>
@@ -51,8 +51,14 @@ require('./includes/header.php');
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" name="quantity" required>
 
-        <label for="vehicleImg">Vehicle Image:</label>
-        <input type="file" id="vehicleImg" name="vehicleImg" accept="image/*" required>
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="keychains">Keychains</option>
+            <option value="bags">Bags</option>
+        </select>
+
+        <label for="productImg">Product Image:</label>
+        <input type="file" id="productImg" name="productImg" accept="image/*" required>
 
         <input type="submit" value="Add Product">
     </form>
@@ -73,7 +79,7 @@ require('./includes/header.php');
                     contentType: false,
                     success: function(response) {
                         document.getElementById('productForm').reset();
-                        alert(reponse);
+                        alert(response);  
                     },
                     error: function() {
                         alert('Error adding product.');

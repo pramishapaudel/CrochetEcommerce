@@ -18,6 +18,7 @@
             $password=$_POST['password'];
             if($password == $_SESSION['admPassword']){
                 $_SESSION['admUsername']=$_SESSION['tempadmUname'];
+                echo 'ajhahashdasjdhajhavfhafg';
                 header('Location: ./admin/index.php');
             }else{
                 unset($_SESSION['admPassword']);
@@ -31,22 +32,20 @@
             $result = $conn->query($sql);
             if($result->num_rows==1){
                 $row=$result->fetch_assoc();
-                $_SESSION['tempUname']=$row['Name'];
+                $_SESSION['tempUname']=$row['userName'];
                 $_SESSION['Phone']=$row['Contact'];
                 $_SESSION['Password']=$row['Password'];
-                $_SESSION['userID']=$row['UserID'];
-                $_SESSION['CitizenImg']=$row['CitizenshipImg'];
-                $_SESSION['LicenseImg']=$row['LicenseImg'];
+                $_SESSION['userID']=$row['userId'];
             }else{
                 //check if number exists in admins table
-                $sql1="SELECT * FROM admins WHERE adminNum = $phone";
+                $sql1="SELECT * FROM admin WHERE adminNumber = $phone";
                 $result1 = $conn->query($sql1);
                 if($result1->num_rows==1){
                     $row1=$result1->fetch_assoc();
                     $_SESSION['tempadmUname']=$row1['adminName'];
-                    $_SESSION['admPhone']=$row1['adminNum'];
-                    $_SESSION['admPassword']=$row1['password'];
-                    $_SESSION['adminID']=$row1['adminID'];
+                    $_SESSION['admPhone']=$row1['adminNumber'];
+                    $_SESSION['admPassword']=$row1['adminPassword'];
+                    $_SESSION['adminID']=$row1['adminId'];
                 }else{
                     //if not available nowhere ask for register
                     echo "<script>

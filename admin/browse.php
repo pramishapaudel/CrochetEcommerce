@@ -1,12 +1,11 @@
 <?php
 require('../includes/connection.php');
 require('./includes/header.php');
-$select = 'SELECT * FROM products';
 
+$select = 'SELECT * FROM product ORDER BY productId DESC'; // Ensure latest products are retrieved
 $result = $conn->query($select);
 
-// Check if the query was successful
-if ($result) {
+if ($result && $result->num_rows > 0) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,9 +16,8 @@ if ($result) {
     <style>
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            flex-wrap: wrap;
-            gap: 25px; /* Space between items */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
         }
         .product {
             border: 1px solid red;
@@ -31,16 +29,17 @@ if ($result) {
             justify-content: center;
             text-align: center;
             position: relative;
+            padding: 10px;
         }
         .product img {
             height: 90px;
             width: 100px;
+            object-fit: cover;
         }
         .product div {
             margin-top: 10px;
         }
-        .delete-btn,
-        .edit-btn {
+        .delete-btn, .edit-btn {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -51,8 +50,8 @@ if ($result) {
             cursor: pointer;
         }
         .edit-btn {
-            top: 40px; /* Adjust position to not overlap with delete button */
-            background-color: blue; /* Different color for edit button */
+            top: 40px;
+            background-color: blue;
         }
         p {
             font-size: 1em;
@@ -60,27 +59,28 @@ if ($result) {
     </style>
 </head>
 <body>
-    <?php if(isset($_SESSION['$message'])){
-        echo '<script>alert("Update successfully")</script>';
+
+    <?php 
+    if (isset($_SESSION['message'])) {
+        echo '<script>alert("' . $_SESSION['message'] . '")</script>';
+        unset($_SESSION['message']); // Clear message after displaying
     }
     ?>
-    <div class="container">
 
+    <div class="container">
         <?php
         while ($row = $result->fetch_assoc()) {
-            $productLink = "product_page.php?id=" . $row['vehicleID']; // Link to the product's page
-            $editLink = "./includes/edit_product.php?id=" . $row['vehicleID']; // Link to the edit product page
+            $productLink = "product_page.php?id=" . $row['productId']; 
+            $editLink = "./includes/edit_product.php?id=" . $row['productId'];
         ?>
-        <div class="product" data-id="<?php echo $row['vehicleID']; ?>">
+        <div class="product" data-id="<?php echo $row['productId']; ?>">
             <button class="delete-btn">Delete</button>
             <button class="edit-btn" onclick="location.href='<?php echo $editLink; ?>'">Edit</button>
-            <img src="../<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>">
+            <img src="<?php echo '../admin/' . htmlspecialchars($row['productImage']); ?>" alt="<?php echo htmlspecialchars($row['productName']); ?>">
             <div>
-                <p><?php echo $row['vehicleName']; ?></p>
-                <p><?php echo substr($row['vehicleDes'], 0, 50); ?></p>
-                <p>Total: <?php echo $row['vehicleQuantity']; ?></p>
-                <p>Remaining: <?php echo $row['vehicleLeft']; ?></p>
-                <p>Pending: <?php echo $row['vehiclePending']; ?></p>
+                <p><?php echo htmlspecialchars($row['productName']); ?></p>
+                <p><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?></p>
+                <p>Total: <?php echo (int) $row['productQuantity']; ?></p>
             </div>
         </div>
         <?php 
@@ -92,13 +92,14 @@ if ($result) {
     <script>
         $(document).ready(function() {
             $('.delete-btn').click(function() {
-                if(confirm("Delete product?")) {
+                if (confirm("Delete product?")) {
                     let productDiv = $(this).closest('.product');
-                    let vehicleID = productDiv.data('id');
+                    let productID = productDiv.data('id');
+                    
                     $.ajax({
                         type: 'POST',
                         url: './includes/delete_product.php',
-                        data: { vehicleID: vehicleID },
+                        data: { productID: productID },
                         success: function(response) {
                             if (response.trim() === 'success') {
                                 productDiv.remove();
@@ -115,7 +116,7 @@ if ($result) {
 </html>
 <?php
 } else {
-    echo "Error: " . $conn->error;
+    echo "No products available"; // Improved error handling
 }
 
 $conn->close();

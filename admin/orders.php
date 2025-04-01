@@ -6,20 +6,20 @@
         // SQL query to join orders, users, and products tables, sorted by order date
         $sql = "
         SELECT 
-            orders.orderID,
+            orders.orderId,
             orders.date,
             orders.status,
-            users.Name AS userName,
+            users.userName AS userName,
             users.Contact AS userContact,
-            products.vehicleName,
-            products.vehicleDes,
-            products.vehicleImg
+            product.productName,
+            product.productDetails,
+            product.productImage
         FROM 
             orders
         JOIN 
-            users ON orders.userID = users.UserID
+            users ON orders.userId = users.userId
         JOIN 
-            products ON orders.vehicleID = products.vehicleID
+            product ON orders.productId = product.productId
         ORDER BY 
             orders.date DESC
         ";
@@ -78,9 +78,9 @@
                     <td><?php echo $row['date']; ?></td>
                     <td><?php echo $row['userName']; ?></td>
                     <td><?php echo $row['userContact']; ?></td>
-                    <td><?php echo $row['vehicleName']; ?></td>
-                    <td><?php echo $row['vehicleDes']; ?></td>
-                    <td><img src="../<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>"></td>
+                    <td><?php echo $row['productName']; ?></td>
+                    <td><?php echo $row['productDetails']; ?></td>
+                    <td><img src="../<?php echo $row['productImage']; ?>" alt="<?php echo $row['productName']; ?>"></td>
                     <td><?php echo $row['status']; ?></td>
                     <?php if ($row['status'] == 'complete') { ?>
                             <td><button onclick='updateOrderStatus("pick", <?php echo $row['orderID']; ?>)'>Picked</button></td>

@@ -67,13 +67,8 @@
             <tr>
                 <th>Name</th>
                 <th>Contact</th>
-                <th>Gender</th>
-                <th>DOB</th>
-                <th>Citizenship No</th>
-                <th>License No</th>
-                <th>Citizenship Image</th>
-                <th>License Image</th>
-                <th>Status</th>
+                <th>Email</th>
+                <th>Address</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -81,26 +76,15 @@
             <?php
             while ($row = $result->fetch_assoc()) {
             ?>
-            <tr id="user-<?php echo $row['UserID']; ?>">
-                <td><?php echo htmlspecialchars($row['Name']); ?></td>
+            <tr id='user-<?php echo $row["UserID"]; ?>'>
+                <td><?php echo htmlspecialchars($row['userName']); ?></td>
                 <td><?php echo htmlspecialchars($row['Contact']); ?></td>
-                <td><?php echo htmlspecialchars($row['Gender']); ?></td>
-                <td><?php echo htmlspecialchars($row['DOB']); ?></td>
-                <td><?php echo htmlspecialchars($row['Citizenship_no']); ?></td>
-                <td><?php echo htmlspecialchars($row['License_no']); ?></td>
-                <td><a href="<?php echo htmlspecialchars($row['CitizenshipImg']); ?>" target="_blank">
-                    <img src="<?php echo htmlspecialchars($row['CitizenshipImg']); ?>" alt="Citizenship Image" style="cursor: pointer; width: 200px; height: 150px;">
-                    </a>
-                </td>
+                <td><?php echo htmlspecialchars($row['Email']); ?></td>
+                <td><?php echo htmlspecialchars($row['Address']); ?></td>
+                
                 <td>
-                    <a href="<?php echo htmlspecialchars($row['LicenseImg']); ?>" target="_blank">
-                    <img src="<?php echo htmlspecialchars($row['LicenseImg']); ?>" alt="License Image" style="cursor: pointer; width: 200px; height: 150px;">
-                    </a>
-                </td>
-                <td><?php echo htmlspecialchars($row['status']); ?></td>
-                <td>
-                    <button onclick="verifyUser(<?php echo $row['UserID']; ?>)">Verify</button>
-                    <button onclick="deleteUser(<?php echo $row['UserID']; ?>)">Delete</button>
+                    <button onclick='verifyUser(<?php echo $row["UserID"]; ?>)'>Verify</button>
+                    <button onclick='deleteUser(<?php echo $row["UserID"]; ?>)'>Delete</button>
                 </td>
             </tr>
             <?php 

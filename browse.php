@@ -1,12 +1,12 @@
 <?php
-    require('./includes/header.php');
-    require('./includes/connection.php');
-    $select = 'SELECT * FROM products ORDER BY vehicleLeft DESC';
+require('./includes/header.php');
+require('includes/connection.php');
 
-    $result = $conn->query($select);
+// Fetch products sorted by newest first
+$select = 'SELECT * FROM product ORDER BY productId DESC';
+$result = $conn->query($select);
 
-    // Check if the query was successful
-    if ($result) {
+if ($result) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,27 +17,34 @@
     <style>
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 25px; /* Space between items */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px; 
         }
         .product {
             border: 1px solid red;
-            height: 300px;
+            height: 320px;
             width: 278px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 10px;
         }
         .product img {
             height: 100px;
             width: 100px;
+            object-fit: cover;
         }
         .product div {
             text-align: center;
         }
-        p{
+        p {
             font-size: 1em;
+        }
+        .price {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: green;
         }
     </style>
 </head>
@@ -45,18 +52,18 @@
     <div class="container">
         <?php
             while ($row = $result->fetch_assoc()) {
+                $imagePath = !empty($row['productImage']) ? 'admin/' . $row['productImage'] : 'admin/default.jpg';
         ?>
         <div class="product">
-            <img src="<?php echo $row['vehicleImg']; ?>" alt="<?php echo $row['vehicleName']; ?>">
+            <img src="<?php echo htmlspecialchars($imagePath); ?>" 
+                 alt="<?php echo htmlspecialchars($row['productName']); ?>" 
+                 onerror="this.onerror=null; this.src='admin/default.jpg';">
             <div>
-                <p><?php echo $row['vehicleName']; ?></p>
-                <p><?php echo substr($row['vehicleDes'], 0, 50); ?>...</p>
-                <p>Remaining:<?php echo $row['vehicleLeft']-$row['vehiclePending']; ?></p>
-                <?php if($row['vehiclePending'] < $row['vehicleQuantity']) {?>
-                    <a href="rent.php?id=<?php echo $row['vehicleID']; ?>"><button>Rent!</button></a>
-                <?php }else { ?>
-                    <button disabled>Not Available</button>
-                <?php } ?>
+                <p><?php echo htmlspecialchars($row['productName']); ?></p>
+                <p><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?>...</p>
+                <p>Available: <?php echo (int) $row['productQuantity']; ?></p>
+                <p class="price">Rs. <?php echo number_format((float) $row['productPrice'], 2); ?></p>
+                <a href="rent.php?id=<?php echo (int) $row['productId']; ?>"><button>Buy Now</button></a>
             </div>
         </div>
         <?php 
@@ -66,10 +73,10 @@
 </body>
 </html>
 <?php
-    } else {
-        echo "Error: " . $conn->error;
-    }
+} else {
+    echo "Error: " . $conn->error;
+}
 
-    $conn->close();
-    include('includes\footer.php');
+$conn->close();
+include('includes/footer.php');
 ?>

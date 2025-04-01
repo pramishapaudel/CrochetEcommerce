@@ -1,61 +1,44 @@
 <?php
-    require('../../includes/connection.php');
+require('../../includes/connection.php');
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $vehicleName = $_POST['vehicleName'];
-        $vehicleDes = $_POST['vehicleDes'];
-        $price = $_POST['price'];
-        $quantity = $_POST['quantity'];
-        $vehicleImg = $_FILES['vehicleImg'];
-
-        // Directory where images will be uploaded
-        $targetDir = "../../img";
-        $targetFile = "img/" . basename($vehicleImg['name']);
-        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-
-        // Check if image file is an actual image or fake image
-        $check = getimagesize($vehicleImg['tmp_name']);
-        if ($check === false) {
-            echo "File is not an image.";
-            exit;
+// Check if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get form inputs
+    $productName = $_POST['productName'];
+    $productDes = $_POST['productDes'];
+    $price = $_POST['price'];
+    $quantity = $_POST['quantity'];
+    $category = $_POST['category'];
+    
+    // Handle image upload
+    if (isset($_FILES['productImg']) && $_FILES['productImg']['error'] == 0) {
+        $target_dir = "../uploads/" . $category . "/";  // Folder based on category (keychains or bags)
+        $target_file = $target_dir . basename($_FILES["productImg"]["name"]);
+        
+        // Create folder if it doesn't exist
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
         }
-
-        // Check if file already exists
-        if (file_exists($targetFile)) {
-            echo "Sorry, file already exists.";
-            exit;
-        }
-
-        // Check file size (5MB max)
-        if ($vehicleImg['size'] > 5000000) {
-            echo "Sorry, your file is too large.";
-            exit;
-        }
-
-        // Allow certain file formats
-        $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowedFormats)) {
-            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            exit;
-        }
-
-        // Try to upload file
-        if (!move_uploaded_file($vehicleImg['tmp_name'], "../../".$targetFile)) {
-            echo "Sorry, there was an error uploading your file.";
-            exit;
-        }
-
-        // Insert product data into database
-        $stmt = $conn->prepare("INSERT INTO products (vehicleName, vehicleDes, price, vehicleImg, vehicleQuantity, vehicleLeft) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssisss", $vehicleName, $vehicleDes, $price, $targetFile, $quantity, $quantity);
-
-        if ($stmt->execute()) {
-            echo "Product added successfully.";
+        
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($_FILES["productImg"]["tmp_name"], $target_file)) {
+            $imagePath = $category . "/" . basename($_FILES["productImg"]["name"]);
+            
+            // Insert product into database
+            $query = "INSERT INTO product (productName, productDetails, productPrice, productQuantity, productImage)
+                      VALUES ('$productName', '$productDes', '$price', '$quantity', '$imagePath')";
+            if (mysqli_query($conn, $query)) {
+                echo "Product added successfully!";
+            } else {
+                echo "Error: " . mysqli_error($conn);
+            }
         } else {
-            echo "Error: " . $stmt->error;
+            echo "Error uploading the image.";
         }
-
-        $stmt->close();
-        $conn->close();
+    } else {
+        echo "No image uploaded or there was an upload error.";
     }
+} else {
+    echo "Invalid request method.";
+}
 ?>

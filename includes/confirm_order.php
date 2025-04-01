@@ -10,14 +10,14 @@
         $status = "pending";
         
         // Validate the vehicleID and userID exist in their respective tables
-        $stmt = $conn->prepare('SELECT COUNT(*) FROM products WHERE vehicleID = ?');
+        $stmt = $conn->prepare('SELECT COUNT(*) FROM product WHERE productId = ?');
         $stmt->bind_param('i', $vehicleID);
         $stmt->execute();
         $stmt->bind_result($vehicleCount);
         $stmt->fetch();
         $stmt->close();
 
-        $stmt = $conn->prepare('SELECT COUNT(*) FROM users WHERE userID = ?');
+        $stmt = $conn->prepare('SELECT COUNT(*) FROM users WHERE userId = ?');
         $stmt->bind_param('i', $userID);
         $stmt->execute();
         $stmt->bind_result($userCount);
@@ -26,14 +26,12 @@
 
         if ($vehicleCount > 0 && $userCount > 0) {
             // Prepare the SQL statement to prevent SQL injection
-            $stmt = $conn->prepare('INSERT INTO orders (vehicleID, userID, fordate, status) VALUES (?, ?, ?, ?)');
+            $stmt = $conn->prepare('INSERT INTO orders (productId, userId, date, status) VALUES (?, ?, ?, ?)');
             $stmt->bind_param('iiss', $vehicleID, $userID, $fordate, $status);
-            
-            $stmt2 = $conn->prepare('UPDATE products SET vehiclePending = vehiclePending + 1 WHERE vehicleID = ?');
-            $stmt2->bind_param('i',$vehicleID);
+      
 
             if ($stmt->execute()) {
-                $stmt2->execute();
+                echo'<script>alert("fshdjfhj")</script>';
                 echo "success";
             } else {
                 echo "Error: " . $stmt->error;
