@@ -1,5 +1,8 @@
+# Project-I
+BCA 4th semester project
+
 Steps to follow to view this project:
- 1. download this file
- 2. make a database named "rideready"
- 3. run the sql query file named "rideready"
- 4. open file in web browser
+ 1. Download this file
+ 2. Make a database named "yarn_joy"
+ 3. Run the SQL query file named "yarn_joy"
+ 4. Open file in web browser
