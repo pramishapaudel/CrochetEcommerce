@@ -52,7 +52,7 @@ if ($result) {
     <div class="container">
         <?php
             while ($row = $result->fetch_assoc()) {
-                $imagePath = !empty($row['productImage']) ? 'admin/' . $row['productImage'] : 'admin/default.jpg';
+                $imagePath = !empty($row['productImage']) ? './admin/uploads/' . $row['productImage'] : 'admin/default.jpg';
         ?>
         <div class="product">
             <img src="<?php echo htmlspecialchars($imagePath); ?>" 
@@ -63,7 +63,7 @@ if ($result) {
                 <p><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?>...</p>
                 <p>Available: <?php echo (int) $row['productQuantity']; ?></p>
                 <p class="price">Rs. <?php echo number_format((float) $row['productPrice'], 2); ?></p>
-                <a href="rent.php?id=<?php echo (int) $row['productId']; ?>"><button>Buy Now</button></a>
+                <a href="purchase.php?id=<?php echo (int) $row['productId']; ?>"><button>Buy Now</button></a>
             </div>
         </div>
         <?php 

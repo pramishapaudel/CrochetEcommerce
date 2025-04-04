@@ -15,15 +15,15 @@
         if ($action == 'accept') {
             // Update the order status to accepted
             $stmt = $conn->prepare("UPDATE orders 
-                                    JOIN products ON orders.vehicleID = products.vehicleID
-                                    SET orders.status = 'complete', products.vehicleLeft = products.vehicleLeft - 1, products.vehiclePending = products.vehiclePending-1
-                                    WHERE orders.orderID = ?");
+                                    JOIN product ON orders.productId = product.productId
+                                    SET orders.status = 'complete', product.productQuantity = product.productQuantity - 1
+                                    WHERE orders.orderId = ?");
         } elseif ($action == 'reject') {
             // Update the order status to rejected
-            $stmt = $conn->prepare("DELETE FROM orders WHERE orderID = ?");
-            $stmt2 = $conn->prepare("UPDATE products SET vehiclePending = vehiclePending-1 WHERE vehicleID= ?");
-            $stmt2->bind_param('i', $vehicleID);
-            $stmt2->execute();
+            $stmt = $conn->prepare("DELETE FROM orders WHERE orderId = ?");
+            // $stmt2 = $conn->prepare("UPDATE product SET orders.status='rejected' WHERE productId= ?");
+            // $stmt2->bind_param('i', $vehicleID);
+            // $stmt2->execute();
         }
 
         if (isset($stmt)) {
@@ -31,7 +31,7 @@
             if ($stmt->execute()) {
                 echo 'success';
             } else {
-                echo 'error';
+                echo "Error: " . $stmt->error;;
             }
             $stmt->close();
         } else {

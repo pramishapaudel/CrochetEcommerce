@@ -76,7 +76,7 @@ if ($result && $result->num_rows > 0) {
         <div class="product" data-id="<?php echo $row['productId']; ?>">
             <button class="delete-btn">Delete</button>
             <button class="edit-btn" onclick="location.href='<?php echo $editLink; ?>'">Edit</button>
-            <img src="<?php echo '../admin/' . htmlspecialchars($row['productImage']); ?>" alt="<?php echo htmlspecialchars($row['productName']); ?>">
+            <img src="<?php echo '../admin/uploads/' . htmlspecialchars($row['productImage']); ?>" alt="<?php echo htmlspecialchars($row['productName']); ?>">
             <div>
                 <p><?php echo htmlspecialchars($row['productName']); ?></p>
                 <p><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?></p>

@@ -80,7 +80,7 @@
                     <td><?php echo $row['userContact']; ?></td>
                     <td><?php echo $row['productName']; ?></td>
                     <td><?php echo $row['productDetails']; ?></td>
-                    <td><img src="../<?php echo $row['productImage']; ?>" alt="<?php echo $row['productName']; ?>"></td>
+                    <td><img src="./uploads/<?php echo $row['productImage']; ?>" alt="<?php echo $row['productName']; ?>"></td>
                     <td><?php echo $row['status']; ?></td>
                     <?php if ($row['status'] == 'complete') { ?>
                             <td><button onclick='updateOrderStatus("pick", <?php echo $row['orderID']; ?>)'>Picked</button></td>

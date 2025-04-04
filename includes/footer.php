@@ -6,6 +6,6 @@
             <a href="aboutus.php">About Us</a>
             <a href="terms.php">Terms & Conditions</a>
         </div>
-        <p>&copy; <?php echo date("Y"); ?> Rideready Rentals. All rights reserved.</p>
+        <p>&copy; <?php echo date("Y"); ?>Crochet E-commerce. All rights reserved.</p>
     </div>
 </footer>

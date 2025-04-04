@@ -6,7 +6,7 @@
         $userID = $_SESSION["userID"];
 
         // Prepare the SQL statement to prevent SQL injection
-        $stmt = $conn->prepare("SELECT orders.status, orders.orderID, product.productId, product.productName, product.productDetails, product.productImage, product.productPrice
+        $stmt = $conn->prepare("SELECT orders.status, orders.orderId, product.productId, product.productName, product.productDetails, product.productImage, product.productPrice
                             FROM orders 
                             JOIN product ON orders.productId = product.productId 
                             WHERE orders.userId = ? ORDER BY orders.date DESC");
@@ -35,7 +35,7 @@
             // Fetch all orders and display them in the table
             while ($order = $result->fetch_assoc()) {
                 echo "<tr>";
-                echo "<td style='border: none; text-align: center; padding: 8px;'><img src='" . htmlspecialchars($order['productImage']) . "' alt='" . htmlspecialchars($order['vehicleName']) . "' style='height: 100px; width: 100px;'></td>";
+                echo "<td style='border: none; text-align: center; padding: 8px;'><img src='./admin/uploads/" . htmlspecialchars($order['productImage']) . "' alt='" . htmlspecialchars($order['productName']) . "' style='height: 100px; width: 100px;'></td>";
                 echo "<td style='border: none; text-align: center; padding: 8px; colspan: 3'>" . htmlspecialchars($order['productDetails']) . "</td>";
                 echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['productPrice']) . "</td>";
                 echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['status']) . "</td>";

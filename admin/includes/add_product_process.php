@@ -8,11 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $productDes = $_POST['productDes'];
     $price = $_POST['price'];
     $quantity = $_POST['quantity'];
-    $category = $_POST['category'];
     
     // Handle image upload
     if (isset($_FILES['productImg']) && $_FILES['productImg']['error'] == 0) {
-        $target_dir = "../uploads/" . $category . "/";  // Folder based on category (keychains or bags)
+        $target_dir = "../uploads/" . "/";  // Folder based on category (keychains or bags)
         $target_file = $target_dir . basename($_FILES["productImg"]["name"]);
         
         // Create folder if it doesn't exist
@@ -22,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Move the uploaded file to the target directory
         if (move_uploaded_file($_FILES["productImg"]["tmp_name"], $target_file)) {
-            $imagePath = $category . "/" . basename($_FILES["productImg"]["name"]);
+            $imagePath = "./" . basename($_FILES["productImg"]["name"]);
             
             // Insert product into database
             $query = "INSERT INTO product (productName, productDetails, productPrice, productQuantity, productImage)

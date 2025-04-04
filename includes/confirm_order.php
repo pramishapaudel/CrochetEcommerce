@@ -4,14 +4,14 @@
 
     // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $vehicleID = $_POST['vehicleID'];
+        $productID = $_POST['productID'];
         $userID = $_POST['userID']; // Use session userID for security
-        $fordate = $_POST['rentDate'];
+        $fordate = date('Y-m-d');
         $status = "pending";
         
         // Validate the vehicleID and userID exist in their respective tables
         $stmt = $conn->prepare('SELECT COUNT(*) FROM product WHERE productId = ?');
-        $stmt->bind_param('i', $vehicleID);
+        $stmt->bind_param('i', $productID);
         $stmt->execute();
         $stmt->bind_result($vehicleCount);
         $stmt->fetch();
@@ -27,12 +27,11 @@
         if ($vehicleCount > 0 && $userCount > 0) {
             // Prepare the SQL statement to prevent SQL injection
             $stmt = $conn->prepare('INSERT INTO orders (productId, userId, date, status) VALUES (?, ?, ?, ?)');
-            $stmt->bind_param('iiss', $vehicleID, $userID, $fordate, $status);
+            $stmt->bind_param('iiss', $productID, $userID, $fordate, $status);
       
 
             if ($stmt->execute()) {
-                echo'<script>alert("fshdjfhj")</script>';
-                echo "success";
+                echo "Order Placement Successfull";
             } else {
                 echo "Error: " . $stmt->error;
             }

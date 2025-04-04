@@ -51,7 +51,7 @@
                     if(response === 'success') {
                         document.getElementById('order-' + orderID).remove();
                     } else {
-                        alert('Error processing the order.');
+                        alert(response);
                     }
                 },
                 error: function() {
@@ -71,7 +71,6 @@
                 <th>Vehicle Name</th>
                 <th>Price</th>
                 <th>Order Date</th>
-                <th>Order for</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -79,15 +78,14 @@
             <?php
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                            echo "<tr id='order-" . $row['orderID'] . "'>";
+                            echo "<tr id='order-" . $row['orderId'] . "'>";
                             echo "<td>" . $row['userName'] . "</td>";
-                            echo "<td>" . $row['vehicleName'] . "</td>";
-                            echo "<td>" . $row['price'] . "</td>";
+                            echo "<td>" . $row['productName'] . "</td>";
+                            echo "<td>" . $row['productPrice'] . "</td>";
                             echo "<td>" . $row['date'] . "</td>";
-                            echo "<td>" . $row['fordate'] . "</td>";
                             echo "<td>
-                                        <button onclick='handleOrder(\"accept\", " . $row['orderID'] . "," . $row['vehicleID'] . ")'>Accept</button>
-                                        <button onclick='handleOrder(\"reject\", " . $row['orderID'] . ", " . $row['vehicleID'] . ")'>Reject</button>
+                                        <button onclick='handleOrder(\"accept\", " . $row['orderId'] . "," . $row['productId'] . ")'>Accept</button>
+                                        <button onclick='handleOrder(\"reject\", " . $row['orderId'] . ", " . $row['productId'] . ")'>Reject</button>
                                 </td>";
                             echo "</tr>";
                     }

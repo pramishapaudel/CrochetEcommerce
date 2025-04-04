@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $maxSize = 2 * 1024 * 1024; // 2MB
 
         if (in_array($fileType, $allowedTypes) && $fileSize <= $maxSize) {
-            $target_dir = __DIR__ . "/../img/";  // Absolute path fix
+            $target_dir = __DIR__ . "../uploads/";  // Absolute path fix
 
             // Ensure the img/ directory exists
             if (!is_dir($target_dir)) {
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Display current image -->
         <?php if (!empty($product['productImage'])): ?>
             <label>Current Image:</label>
-            <img src="../<?php echo htmlspecialchars($product['productImage']); ?>" alt="Product Image">
+            <img src="../uploads/<?php echo htmlspecialchars($product['productImage']); ?>" alt="Product Image">
         <?php endif; ?>
 
         <label for="productImage">Product Image (Max 2MB, JPG/PNG):</label>

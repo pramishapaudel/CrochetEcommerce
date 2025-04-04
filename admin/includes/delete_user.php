@@ -10,13 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         try {
             // Delete related records in other tables first
-            $stmt1 = $conn->prepare("DELETE FROM orders WHERE userID = ?");
+            $stmt1 = $conn->prepare("DELETE FROM orders WHERE userId = ?");
             $stmt1->bind_param('i', $userID);
             $stmt1->execute();
             $stmt1->close();
 
             // Now delete the user
-            $stmt2 = $conn->prepare("DELETE FROM users WHERE UserID = ?");
+            $stmt2 = $conn->prepare("DELETE FROM users WHERE userId = ?");
             $stmt2->bind_param('i', $userID);
             $stmt2->execute();
             $stmt2->close();

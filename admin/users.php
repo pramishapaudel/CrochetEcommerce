@@ -83,8 +83,7 @@
                 <td><?php echo htmlspecialchars($row['Address']); ?></td>
                 
                 <td>
-                    <button onclick='verifyUser(<?php echo $row["UserID"]; ?>)'>Verify</button>
-                    <button onclick='deleteUser(<?php echo $row["UserID"]; ?>)'>Delete</button>
+                    <button onclick='deleteUser(<?php echo $row["userId"]; ?>)'>Delete</button>
                 </td>
             </tr>
             <?php 
@@ -110,27 +109,6 @@
                     },
                     error: function() {
                         alert('Error deleting user.');
-                    }
-                });
-            }
-        }
-        function verifyUser(userID) {
-            if (confirm("Are you sure you want to verify this user?")) {
-                $.ajax({
-                    url: './includes/verify_user_process.php',
-                    type: 'POST',
-                    data: { userID: userID },
-                    success: function(response) {
-                        if (response === 'success') {
-                            alert('User verified successfully!');
-                            // Optionally, refresh the page or update the UI
-                            location.reload();
-                        } else {
-                            alert('Error verifying user: ' + response);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error verifying user: ' + xhr.responseText);
                     }
                 });
             }
