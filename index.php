@@ -12,7 +12,10 @@
 <body>
     <div class="center">
         <p>Welcome to<br><span> Crochet E-commerce</span><br>The place where you can buy crochet items.</p>
-        <br><button id="goto"><a href="./browse.php" style="text-decoration: none;color:purple">Explore!</a></button>
+        <br><a href="browse.php" style="text-decoration: none; color: purple;">
+    <button id="goto">Browse!</button>
+</a>
+
     </div>
 </body>
 </html>

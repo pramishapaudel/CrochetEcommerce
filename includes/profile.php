@@ -1,23 +1,22 @@
 <?php
-    // profile.php
-    require('./connection.php');
-    session_start();
+// includes/profile.php
+require('./connection.php');
+session_start();
 
-    if (!isset($_SESSION['userID'])) {
-        header("Location: login.php");
-        exit();
-    }
+if (!isset($_SESSION['userID'])) {
+    header("Location: login.php");
+    exit();
+}
 
-    // Fetch user details using $_SESSION['userID']
-    $userID = $_SESSION['userID'];
-    $sql = "SELECT * FROM users WHERE UserID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    $stmt->close();
-    $conn->close();
+$userID = $_SESSION['userID'];
+$sql = "SELECT * FROM users WHERE userId = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -25,22 +24,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>User Profile</title>
     <link rel="stylesheet" href="../assets/css/profile.css">
 </head>
 <body>
     <div class="profile-container">
         <div class="profile-header">
             <button class="back-button" onclick='window.history.back()'>&lt; Go back</button>
-            <h1>Profile</h1>
+            <h1>User Profile</h1>
         </div>
         <div class="profile-details">
-            <p><strong>Name:</strong> <?php echo htmlspecialchars($user['Name']); ?></p>
-            <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['Contact']); ?></p>
-            <p><strong>Birth Date:</strong> <?php echo htmlspecialchars($user['DOB']); ?></p>
-            <p><strong>Gender:</strong> <?php echo htmlspecialchars($user['Gender']); ?></p>
-            <p><strong>Citizenship:</strong> <?php echo htmlspecialchars($user['Citizenship_no']); ?></p>
-            <p><strong>License:</strong> <?php echo htmlspecialchars($user['License_no']); ?></p>
+            <p><strong>Name:</strong> <?php echo htmlspecialchars($user['userName'] ?? 'N/A'); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($user['Email'] ?? 'N/A'); ?></p>
+            <p><strong>Address:</strong> <?php echo htmlspecialchars($user['Address'] ?? 'N/A'); ?></p>
+            <p><strong>Contact:</strong> <?php echo htmlspecialchars($user['Contact'] ?? 'N/A'); ?></p>
         </div>
     </div>
 </body>

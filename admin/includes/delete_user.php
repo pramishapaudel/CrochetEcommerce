@@ -9,6 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn->begin_transaction();
 
         try {
+            // Delete related cart_items first
+            $stmt_cart_items = $conn->prepare("DELETE FROM cart_items WHERE cart_id IN (SELECT cart_id FROM cart WHERE user_id = ?)");
+            $stmt_cart_items->bind_param('i', $userID);
+            $stmt_cart_items->execute();
+            $stmt_cart_items->close();
+
+            // Delete related carts
+            $stmt_cart = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
+            $stmt_cart->bind_param('i', $userID);
+            $stmt_cart->execute();
+            $stmt_cart->close();
+
             // Delete related records in other tables first
             $stmt1 = $conn->prepare("DELETE FROM orders WHERE userId = ?");
             $stmt1->bind_param('i', $userID);

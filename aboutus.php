@@ -7,50 +7,59 @@ require('includes/connection.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
+    <title>About Us - Yarn-Joy</title>
     <link rel="stylesheet" href="./assets/css/style.css">
-    <style>
-        body {
-            font-family:Playfair Display, serif ;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-    </style>
 </head>
 <body>
     <header>
-        <h1>About Us</h1>
+        <nav>
+            <!-- Assuming your header.php includes the navigation -->
+        </nav>
     </header>
-    <div class="container">
+
+    <div class="about-container">
         <div class="content">
-            <h2>Welcome to Yarn-Joy </h2>
+            <h1>Welcome to <span>Yarn-Joy</span></h1>
             <p>
-                yarn-Joy is the business platform dedicated to satisfy the users demmand of crochet iteams including keyrings,bags,flowers and many more.Exoplore crochet items and enjoy the yarn.
+                At <span>Yarn-Joy</span>, we weave creativity and passion into every stitch. Our platform is dedicated to fulfilling your love for crochet with a delightful range of handmade items, including keychains, bags, flowers, and so much more. Dive into the world of yarn and let your joy unravel with every unique piece!
             </p>
         </div>
-        <div class="section">
-            <h2>Our Location</h2>
-            <div class="iframe-container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d4716.559013319266!2d85.43817257207252!3d27.67319546313512!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1719629506480!5m2!1sen!2snp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
+
+        <div class="content">
+            <h2>Our Mission</h2>
+            <p>
+                We aim to bring the timeless art of crochet to life, offering you beautifully crafted products that spark joy and inspiration. Whether you're a crochet enthusiast or simply looking for a special gift, <span>Yarn-Joy</span> is here to make every moment colorful and cozy.
+            </p>
         </div>
+
         <div class="contact">
-            <h2>Contact Us</h2>
+            <h2>Get in Touch</h2>
             <p>
-                If you have any questions or need further information, please feel free to contact us:
+                Have questions or want to collaborate? We’d love to hear from you! Reach out to us through:
             </p>
             <p>
-                <strong>Email:</strong>
-                <a href="mailto:ppramisha16@gmail.com">ppramisha16@gmail.com</a> or
-                <a href="mailto:ghimirenirjala18@gmail.com">ghimirenirjala18</a><br>
-                <strong>Phone:</strong> <a href="tel:+977 9828714530">9828714530</a> <a href="tel:+977 9861881083">9861881083</a>
+                <strong>Email:</strong> 
+                <a href="mailto:ppramisha16@gmail.com">ppramisha16@gmail.com</a> 
+        <br>
+                <strong>Phone:</strong> 
+                <a href="tel:+977 9828714530">9828714530</a> 
             </p>
-            <p>
-                We look forward to hearing from you!
-            </p>
+            <button onclick="window.location.href='mailto:ppramisha16@gmail.com';">
+                Contact Us Now
+            </button>
         </div>
     </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#">Shop</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+            </div>
+            <p>&copy; 2025 E-Commerce Crochet</p>
+        </div>
+    </footer>
 </body>
 </html>

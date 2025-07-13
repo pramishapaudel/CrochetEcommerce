@@ -23,8 +23,8 @@
             echo "<table style='border-collapse: collapse; width: 100%;'>";
             echo "<thead>";
             echo "<tr>";
-            echo "<th style='border: none; padding: 8px; text-align: center;'>Vehicle Image</th>";
-            echo "<th style='border: none; padding: 8px; text-align: center; colspan: 3'>Vehicle Details</th>";
+            echo "<th style='border: none; padding: 8px; text-align: center;'>Product Image</th>";
+            echo "<th style='border: none; padding: 8px; text-align: center; colspan: 3'>Product Details</th>";
             echo "<th style='border: none; padding: 8px; text-align: center;'>Price</th>";
             echo "<th style='border: none; padding: 8px; text-align: center;'>Status</th>";
             echo "<th style='border: none; padding: 8px; text-align: center;'>Actions</th>";
@@ -40,9 +40,9 @@
                 echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['productPrice']) . "</td>";
                 echo "<td style='border: none; text-align: center; padding: 8px;'>" . htmlspecialchars($order['status']) . "</td>";
                 if ($order['status'] == 'complete') {
-                    echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Ready to pick" . "</td>";
+                    echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Ordered" . "</td>";
                 }else if ($order['status'] == 'rejected'){
-                    echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Try renting other vehicle" . "</td>";
+                    echo "<td style='border: none; text-align: center; padding: 8px;'>" . "Try purchasing other Product" . "</td>";
                 }else{
                     echo "<td style='border: none; text-align: center; padding: 8px;'><button onclick='deleteOrder(" . htmlspecialchars($order['orderId']) . ")'>Cancel Order</button></td>";
                 }
@@ -52,7 +52,7 @@
             echo "</tbody>";
             echo "</table>";
         } else {
-            echo "<center><h1>Looks like you haven't rented anything yet.....</h1></center>";
+            echo "<center><h1>Looks like you haven't purchased anything yet.....</h1></center>";
         }
 
         // Close the statement and connection

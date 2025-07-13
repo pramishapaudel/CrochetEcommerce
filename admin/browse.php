@@ -1,123 +1,75 @@
 <?php
+session_start();
 require('../includes/connection.php');
-require('./includes/header.php');
 
-$select = 'SELECT * FROM product ORDER BY productId DESC'; // Ensure latest products are retrieved
+$select = 'SELECT * FROM product ORDER BY productId DESC';
 $result = $conn->query($select);
-
-if ($result && $result->num_rows > 0) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-        }
-        .product {
-            border: 1px solid red;
-            height: 320px;
-            width: 278px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            padding: 10px;
-        }
-        .product img {
-            height: 90px;
-            width: 100px;
-            object-fit: cover;
-        }
-        .product div {
-            margin-top: 10px;
-        }
-        .delete-btn, .edit-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-        }
-        .edit-btn {
-            top: 40px;
-            background-color: blue;
-        }
-        p {
-            font-size: 1em;
-        }
-    </style>
+    <title>Admin - Browse Products</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <?php 
-    if (isset($_SESSION['message'])) {
-        echo '<script>alert("' . $_SESSION['message'] . '")</script>';
-        unset($_SESSION['message']); // Clear message after displaying
-    }
-    ?>
-
-    <div class="container">
-        <?php
-        while ($row = $result->fetch_assoc()) {
-            $productLink = "product_page.php?id=" . $row['productId']; 
-            $editLink = "./includes/edit_product.php?id=" . $row['productId'];
-        ?>
-        <div class="product" data-id="<?php echo $row['productId']; ?>">
-            <button class="delete-btn">Delete</button>
-            <button class="edit-btn" onclick="location.href='<?php echo $editLink; ?>'">Edit</button>
-            <img src="<?php echo '../admin/uploads/' . htmlspecialchars($row['productImage']); ?>" alt="<?php echo htmlspecialchars($row['productName']); ?>">
-            <div>
-                <p><?php echo htmlspecialchars($row['productName']); ?></p>
-                <p><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?></p>
-                <p>Total: <?php echo (int) $row['productQuantity']; ?></p>
+<?php require('./includes/header.php'); ?>
+<div class="main-content">
+    <h1 style="color:#C9184A;font-family:'Merriweather',serif;text-align:center;margin-bottom:30px;">Browse Products</h1>
+    <div class="message-container">
+        <?php if (isset($_GET['success'])): ?>
+            <div class="success-message">
+                ✅ <?php echo htmlspecialchars($_GET['success']); ?>
             </div>
-        </div>
-        <?php 
-        }
-        ?>
+        <?php endif; ?>
+        <?php if (isset($_GET['error'])): ?>
+            <div class="error-message">
+                ❌ <?php echo htmlspecialchars($_GET['error']); ?>
+            </div>
+        <?php endif; ?>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.delete-btn').click(function() {
-                if (confirm("Delete product?")) {
-                    let productDiv = $(this).closest('.product');
-                    let productID = productDiv.data('id');
-                    
-                    $.ajax({
-                        type: 'POST',
-                        url: './includes/delete_product.php',
-                        data: { productID: productID },
-                        success: function(response) {
-                            if (response.trim() === 'success') {
-                                productDiv.remove();
-                            } else {
-                                alert('Error deleting product');
-                            }
-                        }
-                    });
-                }
-            });
+    <div class="product-grid" style="margin-top:30px;">
+        <?php if ($result && $result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="product-card admin-card">
+                    <form action="includes/delete_product.php" method="POST" style="width:100%;margin-bottom:8px;">
+                        <input type="hidden" name="product_id" value="<?php echo $row['productId']; ?>">
+                        <button type="submit" class="btn delete-btn" style="width:100%;">Delete</button>
+                    </form>
+                    <form action="includes/edit_product.php" method="GET" style="width:100%;margin-bottom:8px;">
+                        <input type="hidden" name="id" value="<?php echo $row['productId']; ?>">
+                        <button type="submit" class="btn edit-btn" style="width:100%;">Edit</button>
+                    </form>
+                    <div class="product-image" style="margin-bottom:10px;">
+                        <img src="uploads/<?php echo htmlspecialchars($row['productImage']); ?>" alt="<?php echo htmlspecialchars($row['productName']); ?>" onerror="this.onerror=null; this.src='default.jpg';">
+                    </div>
+                    <div class="product-info" style="text-align:center;">
+                        <h3><?php echo htmlspecialchars($row['productName']); ?></h3>
+                        <div class="desc"><?php echo substr(htmlspecialchars($row['productDetails']), 0, 50); ?></div>
+                        <div class="stock">Total: <?php echo (int)$row['productQuantity']; ?></div>
+                        <div class="price">Rs. <?php echo number_format($row['productPrice'], 2); ?></div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="no-orders">
+                <i class="fas fa-inbox"></i>
+                <h3>No products available!</h3>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<script>
+    // Auto-hide messages after 5 seconds
+    setTimeout(function() {
+        const messages = document.querySelectorAll('.success-message, .error-message');
+        messages.forEach(function(message) {
+            message.style.display = 'none';
         });
-    </script>
+    }, 5000);
+</script>
+<?php $conn->close(); ?>
 </body>
 </html>
-<?php
-} else {
-    echo "No products available"; // Improved error handling
-}
-
-$conn->close();
-?>
