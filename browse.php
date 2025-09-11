@@ -232,8 +232,11 @@
                 var form = $(this);
                 $.post('add_to_cart.php', form.serialize(), function (response) {
                     alert('Added to cart!');
-                    if (response.cart_count !== undefined) {
-                        $('.cart-badge').text(response.cart_count);
+                    if (response && response.cart_count !== undefined) {
+                        var count = parseInt(response.cart_count, 10) || 0;
+                        var $badge = $('.cart-badge');
+                        $badge.text(count);
+                        if (count > 0) { $badge.removeClass('hide'); }
                     }
                 }, 'json');
             });

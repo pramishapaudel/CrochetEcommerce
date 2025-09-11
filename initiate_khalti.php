@@ -8,49 +8,65 @@ if (!isset($_SESSION['userID'])) {
     exit;
 }
 
-// Check if order_id is provided
-if (!isset($_GET['order_id'])) {
+// Check if cart_id is provided
+if (!isset($_GET['cart_id'])) {
     header('Location: checkout.php');
     exit;
 }
 
-$order_id = $_GET['order_id'];
+$cart_id = $_GET['cart_id'];
 $user_id = $_SESSION['userID'];
 
-// Get order details
-$query = "
-    SELECT o.*, u.userName as user_name, u.Email as user_email, u.Contact as user_phone, p.productName, p.productPrice
-    FROM orders o 
-    JOIN users u ON o.userId = u.userId 
-    JOIN product p ON o.productId = p.productId
-    WHERE o.orderId = ? AND o.userId = ? AND o.status = 'pending'
-";
-
+// Get cart items and user info
+$query = "SELECT u.userName as user_name, u.Email as user_email, u.Contact as user_phone
+          FROM users u
+          WHERE u.userId = ?";
 $stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "ii", $order_id, $user_id);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$order = mysqli_fetch_assoc($result);
+$user = mysqli_fetch_assoc($result);
 
-if (!$order) {
+if (!$user) {
+    header('Location: checkout.php');
+    exit;
+}
+
+// Get cart items
+$cart_items_query = "SELECT ci.quantity, p.productName, p.productPrice
+                     FROM cart_items ci
+                     JOIN product p ON ci.product_id = p.productId
+                     WHERE ci.cart_id = ?";
+$stmt = mysqli_prepare($conn, $cart_items_query);
+mysqli_stmt_bind_param($stmt, "i", $cart_id);
+mysqli_stmt_execute($stmt);
+$cart_items_result = mysqli_stmt_get_result($stmt);
+$cart_items = mysqli_fetch_all($cart_items_result, MYSQLI_ASSOC);
+
+if (empty($cart_items)) {
     header('Location: checkout.php');
     exit;
 }
 
 // Calculate total amount
-$total_amount = $order['productPrice'] * $order['orderQuantity'];
+$total_amount = 0;
+$order_names = [];
+foreach ($cart_items as $item) {
+    $total_amount += $item['productPrice'] * $item['quantity'];
+    $order_names[] = $item['productName'] . ' x' . $item['quantity'];
+}
 
 // Prepare Khalti KPG-2 payload
 $payload = [
     "return_url" => "http://localhost/CrochetEcommerce/verify_khalti.php",
     "website_url" => "http://localhost/CrochetEcommerce/",
     "amount" => (int)($total_amount * 100), // in paisa
-    "purchase_order_id" => (string)$order['orderId'],
-    "purchase_order_name" => "Order #" . $order['orderId'] . " - " . $order['productName'],
+    "purchase_order_id" => (string)$cart_id,
+    "purchase_order_name" => "Cart #$cart_id: " . implode(', ', $order_names),
     "customer_info" => [
-        "name" => $order['user_name'],
-        "email" => $order['user_email'],
-        "phone" => $order['user_phone']
+        "name" => $user['user_name'],
+        "email" => $user['user_email'],
+        "phone" => $user['user_phone']
     ]
 ];
 

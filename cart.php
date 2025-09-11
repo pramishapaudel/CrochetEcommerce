@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
+<?php include './includes/header.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 require('./includes/connection.php');
 
 if (!isset($_SESSION['userID'])) {

@@ -67,7 +67,7 @@ $total_orders_query = "SELECT COUNT(*) as total FROM orders";
 $total_orders_result = $conn->query($total_orders_query);
 $total_orders = $total_orders_result->fetch_assoc()['total'];
 
-$total_revenue_query = "SELECT SUM(productPrice * orderQuantity) as revenue FROM orders o JOIN product p ON o.productId = p.productId WHERE o.status = 'completed'";
+$total_revenue_query = "SELECT SUM(productPrice * orderQuantity) as revenue FROM orders o JOIN product p ON o.productId = p.productId WHERE o.status = 'paid'";
 $total_revenue_result = $conn->query($total_revenue_query);
 $total_revenue = $total_revenue_result->fetch_assoc()['revenue'] ?? 0;
 
@@ -354,9 +354,14 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
             color: #856404;
         }
 
-        .status-completed {
+        .status-complete {
             background: #d4edda;
             color: #155724;
+        }
+
+        .status-paid {
+            background: #cce5ff;
+            color: #004085;
         }
 
         .status-cancelled {
@@ -503,7 +508,8 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
                     <select name="status" id="status">
                         <option value="">All Status</option>
                         <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending</option>
-                        <option value="completed" <?php echo $status_filter === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                        <option value="complete" <?php echo $status_filter === 'complete' ? 'selected' : ''; ?>>Complete</option>
+                        <option value="paid" <?php echo $status_filter === 'paid' ? 'selected' : ''; ?>>Paid</option>
                         <option value="cancelled" <?php echo $status_filter === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
                     </select>
                 </div>

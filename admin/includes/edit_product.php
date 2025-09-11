@@ -114,13 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         form {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 14px; /* reduced padding */
             background: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 6px; /* tighter spacing */
             font-weight: bold;
         }
         input[type="text"],
@@ -128,13 +128,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         textarea,
         input[type="file"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
+            padding: 8px; /* smaller padding */
+            margin-bottom: 12px; /* tighter spacing */
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        textarea { min-height: 80px; /* reduce default height */ }
         button {
-            padding: 10px 20px;
+            padding: 8px 16px; /* smaller buttons */
             background: linear-gradient(90deg, #FF758F, #C9184A);
             color: #fff;
             border: none;
@@ -147,8 +148,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         img {
             max-width: 100%;
+            max-height: 140px; /* reduced height to avoid scrolling */
             margin-bottom: 10px;
             border-radius: 5px;
+            object-fit: contain;
+            display: block;
         }
         .back-btn {
             background: #6c757d;

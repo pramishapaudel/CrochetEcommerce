@@ -5,7 +5,6 @@
     <div class="user-info">
         <span>Welcome, <?php echo htmlspecialchars($_SESSION['admUsername'] ?? 'Admin'); ?></span>
         <a href="profile.php">Profile</a>
-        <a href="change_password.php">Change Password</a>
         <a href="includes/logout.php">Logout</a>
     </div>
 </div>

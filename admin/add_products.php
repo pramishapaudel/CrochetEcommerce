@@ -94,53 +94,55 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
             border-bottom: 3px solid #C9184A;
         }
         .main-content {
-            min-height: 80vh;
+            min-height: calc(100vh - 140px);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 40px 10px 0 10px;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .add-product-section {
             background: #fff;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(201,24,74,0.10), 0 1.5px 8px rgba(255,117,143,0.10);
-            padding: 48px 40px 40px 40px;
-            margin-bottom: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(201,24,74,0.10);
+            padding: 30px;
             text-align: center;
-            max-width: 480px;
+            max-width: 500px;
             width: 100%;
             animation: fadeIn 0.7s;
+            margin-top: 20px;
         }
         .add-product-section h2 {
             color: #C9184A;
             font-family: 'Merriweather', serif;
-            margin-bottom: 32px;
-            font-size: 2em;
+            margin-bottom: 25px;
+            font-size: 1.8em;
         }
         .add-product-form {
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 18px;
             align-items: stretch;
         }
         .add-product-form label {
             font-weight: 600;
             color: #C9184A;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: block;
             text-align: left;
-            font-size: 1.08em;
+            font-size: 1em;
         }
         .add-product-form input[type="text"],
         .add-product-form input[type="number"],
         .add-product-form textarea {
             width: 100%;
-            padding: 13px 12px;
+            padding: 10px 12px;
             border: 2px solid #C9184A;
-            border-radius: 10px;
-            font-size: 1.08em;
+            border-radius: 8px;
+            font-size: 1em;
             background: #f9f9f9;
             transition: border 0.2s;
+            box-sizing: border-box;
         }
         .add-product-form input[type="text"]:focus,
         .add-product-form input[type="number"]:focus,
@@ -149,35 +151,36 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
             outline: none;
         }
         .add-product-form textarea {
-            min-height: 90px;
+            min-height: 80px;
             resize: vertical;
         }
         .add-product-form input[type="file"] {
             border: 2px solid #C9184A;
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 8px;
             background: #f9f9f9;
             width: 100%;
+            box-sizing: border-box;
         }
         .add-product-form .form-row {
             display: flex;
-            gap: 18px;
+            gap: 15px;
             width: 100%;
         }
         .add-product-form .form-row > div {
             flex: 1;
         }
         .add-product-btn {
-            padding: 15px 0;
+            padding: 12px 0;
             background: linear-gradient(90deg, #FF758F, #C9184A);
             color: #fff;
             border: none;
-            border-radius: 10px;
-            font-size: 1.15em;
+            border-radius: 8px;
+            font-size: 1.1em;
             font-weight: 700;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
-            margin-top: 10px;
+            margin-top: 8px;
             width: 100%;
         }
         .add-product-btn:hover {
@@ -185,16 +188,16 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
             transform: translateY(-2px);
         }
         .view-products-btn {
-            padding: 15px 0;
+            padding: 12px 0;
             background: #eee;
             color: #C9184A;
             border: none;
-            border-radius: 10px;
-            font-size: 1.15em;
+            border-radius: 8px;
+            font-size: 1.1em;
             font-weight: 700;
             cursor: pointer;
             margin-right: 10px;
-            margin-top: 10px;
+            margin-top: 8px;
             width: 100%;
             transition: background 0.2s;
         }
@@ -203,15 +206,16 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
         }
         @media (max-width: 600px) {
             .main-content {
-                padding: 10px 0 0 0;
+                padding: 15px;
             }
             .add-product-section {
-                padding: 20px 5px;
+                padding: 20px;
                 max-width: 100%;
+                margin-top: 10px;
             }
             .add-product-form .form-row {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
             }
         }
         @keyframes fadeIn {
@@ -266,8 +270,8 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
                     <label for="productImg">Product Image:</label>
                     <input type="file" id="productImg" name="productImg" accept="image/*" required>
                 </div>
-                <div style="display: flex; gap: 16px; justify-content: center;">
-                    <a href="browse.php" class="view-products-btn">View Products</a>
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 5px;">
+                    <a href="browse.php" class="view-products-btn" style="text-decoration: none; display: inline-block;">View Products</a>
                     <button type="submit" class="add-product-btn">Add Product</button>
                 </div>
             </form>

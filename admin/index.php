@@ -39,7 +39,7 @@ $pending_orders_query = "SELECT COUNT(*) as pending FROM orders WHERE DATE(date)
 $pending_orders_result = $conn->query($pending_orders_query);
 $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
 
-$total_revenue_query = "SELECT SUM(productPrice * orderQuantity) as revenue FROM orders o JOIN product p ON o.productId = p.productId WHERE DATE(o.date) = '$today' AND o.status = 'completed'";
+$total_revenue_query = "SELECT SUM(productPrice * orderQuantity) as revenue FROM orders o JOIN product p ON o.productId = p.productId WHERE DATE(o.date) = '$today' AND o.status = 'paid'";
 $total_revenue_result = $conn->query($total_revenue_query);
 $total_revenue = $total_revenue_result->fetch_assoc()['revenue'] ?? 0;
 
@@ -377,7 +377,6 @@ $total_products = $total_products_result->fetch_assoc()['products'];
         <div class="user-info">
             <span>Welcome, <?php echo htmlspecialchars($_SESSION['admUsername']); ?></span>
             <a href="profile.php"><i class="fas fa-user"></i> Profile</a>
-            <a href="change_password.php"><i class="fas fa-key"></i> Change Password</a>
             <a href="includes/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>

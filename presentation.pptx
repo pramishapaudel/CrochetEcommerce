@@ -1,0 +1,36 @@
+
+<?php
+  // Use the existing site header
+  include __DIR__ . '/includes/header.php';
+?>
+
+<main style="max-width: 1200px; margin: 0 auto; padding: 16px;">
+  <h1 style="margin: 0 0 16px; font-size: 24px;">Presentation</h1>
+  <div style="position: relative; width: 100%; padding-top: 62.5%; /* 16:10 aspect */ background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;">
+    <iframe
+      src="/CrochetEcommerce/Presentation.pptx.html"
+      title="Presentation"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+  <p style="margin-top: 12px; color: #666; font-size: 14px;">
+    If the slides do not display correctly, open the standalone export at
+    <a href="/CrochetEcommerce/Presentation.pptx.html">/CrochetEcommerce/Presentation.pptx.html</a>.
+  </p>
+  <details style="margin-top: 8px;">
+    <summary>Prefer embedding a PDF?</summary>
+    <div style="margin-top: 8px; font-size: 14px; color: #444;">
+      Export your PowerPoint to PDF and place it at <code>assets/Presentation.pdf</code>, then replace the iframe <code>src</code> above with <code>/CrochetEcommerce/assets/Presentation.pdf</code>.
+    </div>
+  </details>
+</main>
+
+<?php
+  // Use the existing site footer
+  include __DIR__ . '/includes/footer.php';
+?>
+
+
+

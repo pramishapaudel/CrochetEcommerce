@@ -12,13 +12,13 @@
             <li><a href="./browse.php">Browse</a></li>
             <li><a href="./orders.php">Orders</a></li>
             <li><a href="./aboutus.php">About Us</a></li>            
-            <li class="dropdown">
+             <li class="dropdown">
                 <?php
                 if (isset($_SESSION['Username'])) {
                     echo '<button class="dropbtn">'.$_SESSION['Username'].'</button>';
                     echo '<div class="dropdown-content">';
                     echo '<a href="./includes/profile.php">Profile</a>';
-                    echo '<a href="./includes/logout.php">Log Out</a>';
+                    echo '<a href="/CrochetEcommerce/includes/logout.php">Log Out</a>';
                     echo '</div>';
                 } else {
                     echo '<a href="login.php">Login/Register</a>';
@@ -53,12 +53,13 @@
             <li>
                 <a href="cart.php" class="cart-link" title="View Cart">
                     <i class="fa fa-shopping-cart"></i>
-                    <?php if ($cart_count > 0): ?>
-                        <span class="cart-badge"><?php echo $cart_count; ?></span>
-                    <?php endif; ?>
+                    <span class="cart-badge<?php echo ($cart_count == 0) ? ' hide' : ''; ?>"><?php echo $cart_count; ?></span>
                 </a>
             </li>
         </ul>
     </nav>
+    <style>
+    .cart-badge.hide { display: none; }
+    </style>
 </body>
 </html>

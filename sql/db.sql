@@ -79,3 +79,4 @@ INSERT INTO product (productName, productDetails, productPrice, productQuantity,
 ('Crochet Sunflower Tote', 'Colorful sunflower pattern tote bag', 30.00, 8, 'crochet sunflower tote bag.jpg'),
 ('Crochet Heart Granny Square', 'Adorable heart pattern granny square', 15.00, 15, 'Crochet Heart Granny Square_ Pattern And Ideas.jpg')
 ON DUPLICATE KEY UPDATE productName = productName;
+

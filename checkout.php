@@ -56,32 +56,29 @@ foreach ($cart_items as $item) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_order'])) {
     $payment_method = $_POST['payment_method'];
-    $transaction_id = ($payment_method === 'cod') ? 'COD' : NULL;
-    $order_ids = [];
-
-    // Insert one order per product in cart
-    foreach ($cart_items as $item) {
-        $productId = $item['product_id'];
-        $quantity = $item['quantity'];
-        $query = "INSERT INTO orders (productId, orderQuantity, userId, date, status, transaction_id, payment_method)
-                  VALUES (?, ?, ?, NOW(), 'pending', ?, ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iiiss", $productId, $quantity, $user_id, $transaction_id, $payment_method);
-        $stmt->execute();
-        $order_ids[] = $conn->insert_id;
-    }
-
-    // Mark cart as completed
-    $clear_cart = "UPDATE cart SET status='completed' WHERE cart_id = ?";
-    $stmt = mysqli_prepare($conn, $clear_cart);
-    mysqli_stmt_bind_param($stmt, "i", $cart_id);
-    mysqli_stmt_execute($stmt);
-
     if ($payment_method === 'khalti') {
-        // Redirect to Khalti KPG-2 payment with the first order ID
-        header("Location: initiate_khalti.php?order_id=" . $order_ids[0]);
+        // For Khalti, do not create orders or clear cart yet. Redirect to initiate_khalti.php with cart_id.
+        header("Location: initiate_khalti.php?cart_id=" . $cart_id);
         exit;
     } else {
+        $transaction_id = ($payment_method === 'cod') ? 'COD' : NULL;
+        $order_ids = [];
+        // Insert one order per product in cart
+        foreach ($cart_items as $item) {
+            $productId = $item['product_id'];
+            $quantity = $item['quantity'];
+            $query = "INSERT INTO orders (productId, orderQuantity, userId, date, status, transaction_id, payment_method)
+                      VALUES (?, ?, ?, NOW(), 'pending', ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("iiiss", $productId, $quantity, $user_id, $transaction_id, $payment_method);
+            $stmt->execute();
+            $order_ids[] = $conn->insert_id;
+        }
+        // Mark cart as completed
+        $clear_cart = "UPDATE cart SET status='completed' WHERE cart_id = ?";
+        $stmt = mysqli_prepare($conn, $clear_cart);
+        mysqli_stmt_bind_param($stmt, "i", $cart_id);
+        mysqli_stmt_execute($stmt);
         // Redirect to order success page with the first order ID
         header("Location: order-success.php?order_id=" . $order_ids[0]);
         exit;
