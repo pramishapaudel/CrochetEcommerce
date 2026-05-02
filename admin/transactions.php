@@ -8,9 +8,34 @@ if (!isset($_SESSION['admUsername']) || !isset($_SESSION['adminID'])) {
 }
 
 // Get date range filters
+$quick_range = $_GET['quick_range'] ?? 'this_month';
 $start_date = $_GET['start_date'] ?? date('Y-m-01'); // First day of current month
 $end_date = $_GET['end_date'] ?? date('Y-m-d'); // Today
 $payment_method = $_GET['payment_method'] ?? '';
+
+// Apply quick range presets unless custom is selected
+switch ($quick_range) {
+    case 'today':
+        $start_date = date('Y-m-d');
+        $end_date = date('Y-m-d');
+        break;
+    case 'last_7_days':
+        $start_date = date('Y-m-d', strtotime('-6 days'));
+        $end_date = date('Y-m-d');
+        break;
+    case 'last_30_days':
+        $start_date = date('Y-m-d', strtotime('-29 days'));
+        $end_date = date('Y-m-d');
+        break;
+    case 'this_month':
+        $start_date = date('Y-m-01');
+        $end_date = date('Y-m-d');
+        break;
+    case 'custom':
+    default:
+        // Keep manually selected dates for custom range
+        break;
+}
 
 // Build the query with filters
 $where_conditions = ["o.status = 'paid'"];
@@ -78,6 +103,48 @@ if (!empty($params)) {
 $summary_stmt->execute();
 $summary_result = $summary_stmt->get_result();
 $summary_data = $summary_result->fetch_assoc();
+
+// Top-selling products insight for selected date range
+$top_products_sql = "
+    SELECT
+        p.productId,
+        p.productName,
+        SUM(o.orderQuantity) AS units_sold,
+        SUM(p.productPrice * o.orderQuantity) AS revenue
+    FROM orders o
+    JOIN product p ON o.productId = p.productId
+    WHERE $where_clause
+    GROUP BY p.productId, p.productName
+    ORDER BY units_sold DESC, revenue DESC
+    LIMIT 5
+";
+$top_products_stmt = $conn->prepare($top_products_sql);
+if (!empty($params)) {
+    $top_products_stmt->bind_param($param_types, ...$params);
+}
+$top_products_stmt->execute();
+$top_products_result = $top_products_stmt->get_result();
+
+// Daily summary for management reporting
+$daily_summary_sql = "
+    SELECT
+        DATE(o.date) AS report_date,
+        COUNT(*) AS total_transactions,
+        SUM(p.productPrice * o.orderQuantity) AS total_revenue,
+        SUM(CASE WHEN o.payment_method = 'khalti' THEN p.productPrice * o.orderQuantity ELSE 0 END) AS khalti_revenue,
+        SUM(CASE WHEN o.payment_method = 'cod' THEN p.productPrice * o.orderQuantity ELSE 0 END) AS cod_revenue
+    FROM orders o
+    JOIN product p ON o.productId = p.productId
+    WHERE $where_clause
+    GROUP BY DATE(o.date)
+    ORDER BY report_date DESC
+";
+$daily_summary_stmt = $conn->prepare($daily_summary_sql);
+if (!empty($params)) {
+    $daily_summary_stmt->bind_param($param_types, ...$params);
+}
+$daily_summary_stmt->execute();
+$daily_summary_result = $daily_summary_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -222,6 +289,67 @@ $summary_data = $summary_result->fetch_assoc();
             background: linear-gradient(90deg, #C9184A, #FF758F);
             transform: translateY(-2px);
         }
+        .filters {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+        .filter-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .filter-group > div {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-btn,
+        .export-btn {
+            padding: 9px 14px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #FF758F, #C9184A);
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-products-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .top-products-list {
+            list-style: none;
+            margin: 0;
+            padding: 12px 18px 18px;
+        }
+        .top-products-list li {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .top-products-list li:last-child {
+            border-bottom: none;
+        }
+        .muted {
+            color: #777;
+            font-size: 0.88rem;
+        }
         .transactions-section {
             background: #fff;
             border-radius: 12px;
@@ -350,6 +478,17 @@ $summary_data = $summary_result->fetch_assoc();
         <div class="filters">
             <form method="GET" class="filter-group">
                 <div>
+                    <label for="quick_range">Quick Range:</label>
+                    <select name="quick_range" id="quick_range">
+                        <option value="today" <?php echo ($quick_range == 'today') ? 'selected' : ''; ?>>Today</option>
+                        <option value="last_7_days" <?php echo ($quick_range == 'last_7_days') ? 'selected' : ''; ?>>Last 7 Days</option>
+                        <option value="last_30_days" <?php echo ($quick_range == 'last_30_days') ? 'selected' : ''; ?>>Last 30 Days</option>
+                        <option value="this_month" <?php echo ($quick_range == 'this_month') ? 'selected' : ''; ?>>This Month</option>
+                        <option value="custom" <?php echo ($quick_range == 'custom') ? 'selected' : ''; ?>>Custom</option>
+                    </select>
+                </div>
+                
+                <div>
                     <label for="start_date">Start Date:</label>
                     <input type="date" name="start_date" id="start_date" value="<?php echo $start_date; ?>">
                 </div>
@@ -374,6 +513,34 @@ $summary_data = $summary_result->fetch_assoc();
                 
                 <a href="export_transactions.php?<?php echo http_build_query($_GET); ?>" class="export-btn">Export CSV</a>
             </form>
+        </div>
+
+        <!-- Top Product Insights -->
+        <div class="top-products-section">
+            <div class="section-header">
+                <h2>Top Selling Products (Selected Range)</h2>
+            </div>
+            <?php if ($top_products_result->num_rows > 0): ?>
+                <ul class="top-products-list">
+                    <?php while ($item = $top_products_result->fetch_assoc()): ?>
+                        <li>
+                            <div>
+                                <strong><?php echo htmlspecialchars($item['productName']); ?></strong>
+                            </div>
+                            <div>
+                                <strong><?php echo (int)$item['units_sold']; ?></strong>
+                                <div class="muted">units sold</div>
+                            </div>
+                            <div>
+                                <strong>Rs <?php echo number_format($item['revenue'], 2); ?></strong>
+                                <div class="muted">revenue</div>
+                            </div>
+                        </li>
+                    <?php endwhile; ?>
+                </ul>
+            <?php else: ?>
+                <div class="empty-state" style="text-align:center; color:#C9184A;">No sales data found in this range.</div>
+            <?php endif; ?>
         </div>
         
         <!-- Transactions Table -->
@@ -434,6 +601,44 @@ $summary_data = $summary_result->fetch_assoc();
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Daily Summary Table -->
+        <div class="table-container" style="margin-top: 30px;">
+            <div class="section-header" style="margin-bottom: 0;">
+                <h2>Daily Revenue Summary</h2>
+            </div>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Total Transactions</th>
+                        <th>Total Revenue</th>
+                        <th>Khalti Revenue</th>
+                        <th>COD Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($daily_summary_result->num_rows > 0): ?>
+                        <?php while ($sum = $daily_summary_result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($sum['report_date']); ?></td>
+                                <td><?php echo (int)$sum['total_transactions']; ?></td>
+                                <td>Rs <?php echo number_format($sum['total_revenue'] ?? 0, 2); ?></td>
+                                <td>Rs <?php echo number_format($sum['khalti_revenue'] ?? 0, 2); ?></td>
+                                <td>Rs <?php echo number_format($sum['cod_revenue'] ?? 0, 2); ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="empty-state" style="text-align:center; color:#C9184A;">No summary data for selected criteria</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            <div style="padding: 14px 0;">
+                <a href="export_transactions.php?<?php echo http_build_query(array_merge($_GET, ['report_type' => 'daily_summary'])); ?>" class="export-btn">Export Daily Summary CSV</a>
+            </div>
         </div>
     </div>
 </body>

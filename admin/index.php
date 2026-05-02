@@ -46,6 +46,35 @@ $total_revenue = $total_revenue_result->fetch_assoc()['revenue'] ?? 0;
 $total_products_query = "SELECT COUNT(*) as products FROM product";
 $total_products_result = $conn->query($total_products_query);
 $total_products = $total_products_result->fetch_assoc()['products'];
+
+// Low-stock and out-of-stock products for dashboard alerts
+$low_stock_threshold = 5;
+$low_stock_query = "
+    SELECT productId, productName, productQuantity
+    FROM product
+    WHERE productQuantity <= $low_stock_threshold
+    ORDER BY productQuantity ASC, productName ASC
+    LIMIT 10
+";
+$low_stock_result = $conn->query($low_stock_query);
+
+// Top-selling products this month (paid orders)
+$current_month = date('Y-m');
+$top_selling_query = "
+    SELECT 
+        p.productId,
+        p.productName,
+        p.productQuantity,
+        SUM(o.orderQuantity) as total_units_sold,
+        SUM(p.productPrice * o.orderQuantity) as total_revenue
+    FROM orders o
+    JOIN product p ON o.productId = p.productId
+    WHERE o.status = 'paid' AND DATE_FORMAT(o.date, '%Y-%m') = '$current_month'
+    GROUP BY p.productId, p.productName, p.productQuantity
+    ORDER BY total_units_sold DESC, total_revenue DESC
+    LIMIT 5
+";
+$top_selling_result = $conn->query($top_selling_query);
 ?>
 
 <!DOCTYPE html>
@@ -335,6 +364,93 @@ $total_products = $total_products_result->fetch_assoc()['products'];
             transform: translateY(-2px);
         }
 
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .insight-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+        .insight-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .insight-header h2 {
+            color: #C9184A;
+            font-size: 20px;
+            font-family: 'Merriweather', serif;
+        }
+
+        .insight-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .insight-table th {
+            background: #f8f9fa;
+            padding: 12px 14px;
+            text-align: left;
+            color: #C9184A;
+            border-bottom: 1px solid #eee;
+        }
+
+        .insight-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alert-list {
+            list-style: none;
+            padding: 12px 18px;
+            margin: 0;
+        }
+
+        .alert-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+
+        .alert-list li:last-child {
+            border-bottom: none;
+        }
+
+        .qty-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .qty-critical {
+            background: #ffe6e6;
+            color: #9f1c1c;
+        }
+
+        .qty-low {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .empty-insight {
+            text-align: center;
+            color: #666;
+            padding: 22px 12px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header {
@@ -366,6 +482,10 @@ $total_products = $total_products_result->fetch_assoc()['products'];
 
             .action-buttons {
                 flex-direction: column;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -484,6 +604,62 @@ $total_products = $total_products_result->fetch_assoc()['products'];
                     <p>All caught up. Check back later for new orders.</p>
                 </div>
             <?php endif; ?>
+        </div>
+
+        <!-- Top Selling and Inventory Alerts -->
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-header">
+                    <h2>Top Selling Products This Month</h2>
+                </div>
+                <table class="insight-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                            <th>Stock Left</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($top_selling_result->num_rows > 0): ?>
+                            <?php while ($row = $top_selling_result->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['productName']); ?></td>
+                                    <td><?php echo (int)$row['total_units_sold']; ?></td>
+                                    <td>Rs <?php echo number_format($row['total_revenue'], 2); ?></td>
+                                    <td><?php echo (int)$row['productQuantity']; ?></td>
+                                </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="empty-insight">No paid sales recorded this month.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="insight-card">
+                <div class="insight-header">
+                    <h2>Inventory Alerts</h2>
+                </div>
+                <?php if ($low_stock_result->num_rows > 0): ?>
+                    <ul class="alert-list">
+                        <?php while ($item = $low_stock_result->fetch_assoc()): ?>
+                            <?php $is_out = (int)$item['productQuantity'] === 0; ?>
+                            <li>
+                                <span><?php echo htmlspecialchars($item['productName']); ?></span>
+                                <span class="qty-badge <?php echo $is_out ? 'qty-critical' : 'qty-low'; ?>">
+                                    <?php echo $is_out ? 'Out of stock' : ('Qty: ' . (int)$item['productQuantity']); ?>
+                                </span>
+                            </li>
+                        <?php endwhile; ?>
+                    </ul>
+                <?php else: ?>
+                    <div class="empty-insight">All products are above low-stock threshold.</div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 

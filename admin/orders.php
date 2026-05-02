@@ -423,6 +423,17 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
             background: linear-gradient(90deg, #C9184A, #FF758F);
             transform: translateY(-2px);
         }
+        .status-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .status-select {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -547,11 +558,12 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
                             <th>Payment</th>
                             <th>Status</th>
                             <th>Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php while ($order = $result->fetch_assoc()): ?>
-                            <tr>
+                            <tr id="order-row-<?php echo (int)$order['orderId']; ?>">
                                 <td>
                                     <img src="uploads/<?php echo htmlspecialchars($order['productImage']); ?>" 
                                          alt="<?php echo htmlspecialchars($order['productName']); ?>" 
@@ -584,12 +596,23 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="status-badge status-<?php echo $order['status']; ?>">
+                                    <span id="order-status-<?php echo (int)$order['orderId']; ?>" class="status-badge status-<?php echo $order['status']; ?>">
                                         <?php echo ucfirst($order['status']); ?>
                                     </span>
                                 </td>
                                 <td>
                                     <span class="date"><?php echo date('M d, Y H:i', strtotime($order['date'])); ?></span>
+                                </td>
+                                <td>
+                                    <div class="status-actions">
+                                        <select class="status-select" id="status-select-<?php echo (int)$order['orderId']; ?>">
+                                            <option value="pending" <?php echo $order['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                            <option value="complete" <?php echo $order['status'] === 'complete' ? 'selected' : ''; ?>>Complete</option>
+                                            <option value="paid" <?php echo $order['status'] === 'paid' ? 'selected' : ''; ?>>Paid</option>
+                                            <option value="cancelled" <?php echo $order['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                        </select>
+                                        <button class="action-btn" onclick="updateOrderStatus(<?php echo (int)$order['orderId']; ?>)">Update</button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -604,6 +627,38 @@ $pending_orders = $pending_orders_result->fetch_assoc()['pending'];
             <?php endif; ?>
         </div>
     </div>
+    <script>
+        function updateOrderStatus(orderID) {
+            const select = document.getElementById('status-select-' + orderID);
+            const nextStatus = select.value;
+
+            const formData = new URLSearchParams();
+            formData.append('orderID', orderID);
+            formData.append('status', nextStatus);
+
+            fetch('./includes/update_order_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            })
+            .then(response => response.text())
+            .then(text => {
+                if (text.trim() === 'success') {
+                    const badge = document.getElementById('order-status-' + orderID);
+                    badge.className = 'status-badge status-' + nextStatus;
+                    badge.textContent = nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
+                    alert('Order status updated successfully.');
+                } else {
+                    alert(text);
+                }
+            })
+            .catch(() => {
+                alert('Failed to update order status.');
+            });
+        }
+    </script>
 </body>
 </html>
 

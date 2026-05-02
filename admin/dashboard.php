@@ -103,6 +103,34 @@ $pending_orders_query = "
     ORDER BY o.date DESC
 ";
 $pending_orders_result = $conn->query($pending_orders_query);
+
+// Low-stock and out-of-stock products for quick inventory decisions
+$low_stock_threshold = 5;
+$low_stock_query = "
+    SELECT productId, productName, productQuantity
+    FROM product
+    WHERE productQuantity <= $low_stock_threshold
+    ORDER BY productQuantity ASC, productName ASC
+    LIMIT 10
+";
+$low_stock_result = $conn->query($low_stock_query);
+
+// Top-selling products this month (paid orders only)
+$top_selling_query = "
+    SELECT 
+        p.productId,
+        p.productName,
+        p.productQuantity,
+        SUM(o.orderQuantity) as total_units_sold,
+        SUM(p.productPrice * o.orderQuantity) as total_revenue
+    FROM orders o
+    JOIN product p ON o.productId = p.productId
+    WHERE o.status = 'paid' AND DATE_FORMAT(o.date, '%Y-%m') = '$current_month'
+    GROUP BY p.productId, p.productName, p.productQuantity
+    ORDER BY total_units_sold DESC, total_revenue DESC
+    LIMIT 5
+";
+$top_selling_result = $conn->query($top_selling_query);
 ?>
 
 <!DOCTYPE html>
@@ -333,6 +361,60 @@ $pending_orders_result = $conn->query($pending_orders_query);
             text-align: center;
             color: #666;
         }
+
+        .insight-list {
+            list-style: none;
+            padding: 16px 20px 20px;
+            margin: 0;
+        }
+
+        .insight-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            gap: 12px;
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-item-name {
+            font-size: 0.92rem;
+            color: rgb(82, 5, 5);
+            flex: 1;
+        }
+
+        .qty-badge {
+            min-width: 78px;
+            text-align: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .qty-critical {
+            background: #ffe6e6;
+            color: #9f1c1c;
+        }
+
+        .qty-low {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .insight-empty {
+            padding: 20px;
+            color: #666;
+            text-align: center;
+        }
+
+        .mt-30 {
+            margin-top: 30px;
+        }
         
         @media (max-width: 768px) {
             .content-grid {
@@ -496,6 +578,64 @@ $pending_orders_result = $conn->query($pending_orders_query);
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- Inventory and Sales Insights -->
+        <div class="content-grid mt-30">
+            <div class="section">
+                <div class="section-header">
+                    <h2>Top Selling Products This Month</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Units Sold</th>
+                                <th>Revenue</th>
+                                <th>Stock Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($top_selling_result->num_rows > 0): ?>
+                                <?php while ($row = $top_selling_result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['productName']); ?></td>
+                                        <td><?php echo (int)$row['total_units_sold']; ?></td>
+                                        <td class="amount">Rs <?php echo number_format($row['total_revenue'], 2); ?></td>
+                                        <td><?php echo (int)$row['productQuantity']; ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4" class="empty-state">No paid sales recorded this month</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Inventory Alerts</h2>
+                </div>
+                <?php if ($low_stock_result->num_rows > 0): ?>
+                    <ul class="insight-list">
+                        <?php while ($item = $low_stock_result->fetch_assoc()): ?>
+                            <?php $is_out = (int)$item['productQuantity'] === 0; ?>
+                            <li class="insight-item">
+                                <span class="insight-item-name"><?php echo htmlspecialchars($item['productName']); ?></span>
+                                <span class="qty-badge <?php echo $is_out ? 'qty-critical' : 'qty-low'; ?>">
+                                    <?php echo $is_out ? 'Out of stock' : ('Qty: ' . (int)$item['productQuantity']); ?>
+                                </span>
+                            </li>
+                        <?php endwhile; ?>
+                    </ul>
+                <?php else: ?>
+                    <div class="insight-empty">All products are above low-stock threshold.</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
