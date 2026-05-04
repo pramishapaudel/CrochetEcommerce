@@ -1,5 +1,5 @@
-# MIS Project
-BCA 5th semester project
+# Project II
+BCA 6th semester project
 
 Steps to follow to view this project:
  1. Download this file
